@@ -1,0 +1,15 @@
+{
+  "name": "cobrowse-demo",
+  "version": "1.0.0",
+  "description": "Co-browsing demo for CIBC support team",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "ws": "^8.14.2"
+  }
+}

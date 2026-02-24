@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Agent Dashboard - Co-Browse</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #0f172a;
+      min-height: 100vh;
+      color: white;
+    }
+
+    /* Header */
+    .agent-header {
+      background: #1e293b;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #334155;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .header-badge {
+      background: #3b82f6;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .session-badge {
+      background: #1e293b;
+      border: 1px solid #475569;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      letter-spacing: 2px;
+      display: none;
+    }
+
+    .session-badge.show {
+      display: block;
+    }
+
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #64748b;
+    }
+
+    .status-dot.connected {
+      background: #22c55e;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Main Layout */
+    .main-layout {
+      display: flex;
+      height: calc(100vh - 52px);
+    }
+
+    /* Join Panel */
+    .join-panel {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .join-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 48px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+
+    .join-icon {
+      width: 64px;
+      height: 64px;
+      background: #3b82f6;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .join-icon svg {
+      width: 32px;
+      height: 32px;
+      color: white;
+    }
+
+    .join-card h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .join-card p {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .code-inputs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .code-input {
+      width: 48px;
+      height: 56px;
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      color: white;
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      text-transform: uppercase;
+      transition: border-color 0.2s;
+    }
+
+    .code-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .code-input::placeholder {
+      color: #475569;
+    }
+
+    .join-btn {
+      width: 100%;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .join-btn:hover:not(:disabled) {
+      background: #2563eb;
+    }
+
+    .join-btn:disabled {
+      background: #475569;
+      cursor: not-allowed;
+    }
+
+    .error-text {
+      color: #ef4444;
+      font-size: 13px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .error-text.show {
+      display: block;
+    }
+
+    /* Viewer Panel */
+    .viewer-panel {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      background: #0f172a;
+    }
+
+    .viewer-panel.active {
+      display: flex;
+    }
+
+    .viewer-toolbar {
+      background: #1e293b;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #334155;
+    }
+
+    .viewer-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .live-badge {
+      background: #dc2626;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      animation: pulse 1s infinite;
+    }
+
+    .viewer-url {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .end-btn {
+      background: transparent;
+      color: #ef4444;
+      border: 1px solid #ef4444;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .end-btn:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* Iframe Container */
+    .viewer-container {
+      flex: 1;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      overflow: auto;
+      background: #0f172a;
+    }
+
+    .browser-window {
+      background: #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .browser-bar {
+      background: #334155;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .browser-dots span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .browser-dots span:nth-child(1) { background: #ef4444; }
+    .browser-dots span:nth-child(2) { background: #f59e0b; }
+    .browser-dots span:nth-child(3) { background: #22c55e; }
+
+    .browser-address {
+      flex: 1;
+      background: #1e293b;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .browser-address svg {
+      width: 14px;
+      height: 14px;
+      color: #22c55e;
+    }
+
+    .browser-viewport {
+      flex: 1;
+      background: white;
+      position: relative;
+      min-height: 600px;
+    }
+
+    /* Client View iframe */
+    #client-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Cursor indicator */
+    .cursor-indicator {
+      position: absolute;
+      pointer-events: none;
+      z-index: 10000;
+      transition: left 0.05s linear, top 0.05s linear;
+      display: none;
+    }
+
+    .cursor-indicator.show {
+      display: block;
+    }
+
+    /* Waiting overlay */
+    .waiting-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .waiting-overlay.hidden {
+      display: none;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .waiting-text {
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    /* Disconnected state */
+    .disconnected-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(239, 68, 68, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      color: white;
+    }
+
+    .disconnected-overlay.hidden {
+      display: none;
+    }
+
+    .disconnect-icon {
+      width: 64px;
+      height: 64px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .disconnect-icon svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .return-btn {
+      background: white;
+      color: #ef4444;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="agent-header">
+    <div class="header-left">
+      <span class="header-title">Support Agent Dashboard</span>
+      <span class="header-badge">Co-Browse</span>
+    </div>
+    <div class="header-right">
+      <div class="session-badge" id="sessionBadge">------</div>
+      <div class="connection-status">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="connectionText">Not connected</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-layout">
+    <!-- Join Panel -->
+    <div class="join-panel" id="joinPanel">
+      <div class="join-card">
+        <div class="join-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15 8v8H5V8h10m1-2H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4V7c0-.55-.45-1-1-1z"/>
+          </svg>
+        </div>
+        <h2>Join a Session</h2>
+        <p>Enter the 6-digit code provided by the customer to view their screen</p>
+
+        <div class="code-inputs">
+          <input type="text" class="code-input" maxlength="1" data-index="0" placeholder="•">
+          <input type="text" class="code-input" maxlength="1" data-index="1" placeholder="•">
+          <input type="text" class="code-input" maxlength="1" data-index="2" placeholder="•">
+          <input type="text" class="code-input" maxlength="1" data-index="3" placeholder="•">
+          <input type="text" class="code-input" maxlength="1" data-index="4" placeholder="•">
+          <input type="text" class="code-input" maxlength="1" data-index="5" placeholder="•">
+        </div>
+
+        <button class="join-btn" id="joinBtn" disabled>Connect to Session</button>
+        <p class="error-text" id="errorText">Session not found. Please check the code and try again.</p>
+      </div>
+    </div>
+
+    <!-- Viewer Panel -->
+    <div class="viewer-panel" id="viewerPanel">
+      <div class="viewer-toolbar">
+        <div class="viewer-info">
+          <div class="live-badge">
+            <span class="live-dot"></span>
+            LIVE
+          </div>
+          <span class="viewer-url">Viewing: cibc.com - Password Reset</span>
+        </div>
+        <button class="end-btn" onclick="endSession()">End Session</button>
+      </div>
+
+      <div class="viewer-container">
+        <div class="browser-window">
+          <div class="browser-bar">
+            <div class="browser-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="browser-address">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+              </svg>
+              <span>www.cibc.com/password-reset</span>
+            </div>
+          </div>
+          <div class="browser-viewport" id="browserViewport">
+            <!-- Waiting overlay -->
+            <div class="waiting-overlay" id="waitingOverlay">
+              <div class="spinner"></div>
+              <p class="waiting-text">Waiting for client's screen...</p>
+            </div>
+
+            <!-- Disconnected overlay -->
+            <div class="disconnected-overlay hidden" id="disconnectedOverlay">
+              <div class="disconnect-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+              </div>
+              <h3>Client Disconnected</h3>
+              <p>The customer has ended the session or lost connection</p>
+              <button class="return-btn" onclick="resetView()">Return to Dashboard</button>
+            </div>
+
+            <!-- Client frame -->
+            <iframe id="client-frame" sandbox="allow-same-origin"></iframe>
+
+            <!-- Cursor indicator -->
+            <div class="cursor-indicator" id="cursorIndicator">
+              <svg width="24" height="24" viewBox="0 0 24 24">
+                <path fill="#3b82f6" stroke="#fff" stroke-width="1.5" d="M5.5 3.21V20.8l5.71-5.71h8.29L5.5 3.21z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let ws = null;
+    let sessionCode = '';
+    const codeInputs = document.querySelectorAll('.code-input');
+
+    // Code input handling
+    codeInputs.forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+        const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        e.target.value = value;
+
+        if (value && index < codeInputs.length - 1) {
+          codeInputs[index + 1].focus();
+        }
+
+        updateJoinButton();
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !e.target.value && index > 0) {
+          codeInputs[index - 1].focus();
+        }
+      });
+
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pasted = e.clipboardData.getData('text').toUpperCase().replace(/[^A-Z0-9]/g, '');
+        pasted.split('').slice(0, 6).forEach((char, i) => {
+          if (codeInputs[i]) codeInputs[i].value = char;
+        });
+        updateJoinButton();
+        if (pasted.length >= 6) codeInputs[5].focus();
+      });
+
+      input.addEventListener('focus', () => {
+        input.placeholder = '';
+      });
+
+      input.addEventListener('blur', () => {
+        if (!input.value) input.placeholder = '•';
+      });
+    });
+
+    function updateJoinButton() {
+      const code = Array.from(codeInputs).map(i => i.value).join('');
+      document.getElementById('joinBtn').disabled = code.length !== 6;
+    }
+
+    // Join session
+    document.getElementById('joinBtn').addEventListener('click', joinSession);
+
+    function joinSession() {
+      sessionCode = Array.from(codeInputs).map(i => i.value).join('');
+      document.getElementById('errorText').classList.remove('show');
+
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${protocol}//${window.location.host}`);
+
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ type: 'join-session', code: sessionCode }));
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        switch (data.type) {
+          case 'session-joined':
+            showViewer();
+            break;
+
+          case 'error':
+            document.getElementById('errorText').classList.add('show');
+            break;
+
+          case 'full-page':
+            renderClientPage(data.html);
+            break;
+
+          case 'cursor-move':
+            updateCursor(data.x, data.y);
+            break;
+
+          case 'client-disconnected':
+            showDisconnected();
+            break;
+
+          case 'session-ended':
+            resetView();
+            break;
+        }
+      };
+
+      ws.onclose = () => {
+        console.log('WebSocket closed');
+      };
+    }
+
+    function showViewer() {
+      document.getElementById('joinPanel').classList.add('hidden');
+      document.getElementById('viewerPanel').classList.add('active');
+      document.getElementById('sessionBadge').textContent = sessionCode;
+      document.getElementById('sessionBadge').classList.add('show');
+      document.getElementById('statusDot').classList.add('connected');
+      document.getElementById('connectionText').textContent = 'Connected';
+    }
+
+    function renderClientPage(html) {
+      document.getElementById('waitingOverlay').classList.add('hidden');
+      document.getElementById('disconnectedOverlay').classList.add('hidden');
+
+      const iframe = document.getElementById('client-frame');
+
+      // Write the full HTML to the iframe
+      iframe.contentDocument.open();
+      iframe.contentDocument.write(html);
+      iframe.contentDocument.close();
+
+      // Disable all interactive elements
+      setTimeout(() => {
+        try {
+          const doc = iframe.contentDocument;
+          // Disable forms
+          doc.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', e => e.preventDefault());
+          });
+          // Disable inputs
+          doc.querySelectorAll('input, button, select, textarea, a').forEach(el => {
+            el.style.pointerEvents = 'none';
+          });
+        } catch (e) {
+          console.log('Could not modify iframe content');
+        }
+      }, 100);
+    }
+
+    function updateCursor(x, y) {
+      const cursor = document.getElementById('cursorIndicator');
+      const viewport = document.getElementById('browserViewport');
+      const rect = viewport.getBoundingClientRect();
+
+      // Scale cursor position relative to viewport
+      const scaleX = viewport.clientWidth / window.innerWidth;
+      const scaleY = viewport.clientHeight / window.innerHeight;
+
+      cursor.style.left = (x * scaleX) + 'px';
+      cursor.style.top = (y * scaleY) + 'px';
+      cursor.classList.add('show');
+    }
+
+    function showDisconnected() {
+      document.getElementById('waitingOverlay').classList.add('hidden');
+      document.getElementById('disconnectedOverlay').classList.remove('hidden');
+    }
+
+    function endSession() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'end-session' }));
+      }
+      resetView();
+    }
+
+    function resetView() {
+      if (ws) ws.close();
+
+      document.getElementById('joinPanel').classList.remove('hidden');
+      document.getElementById('viewerPanel').classList.remove('active');
+      document.getElementById('sessionBadge').classList.remove('show');
+      document.getElementById('statusDot').classList.remove('connected');
+      document.getElementById('connectionText').textContent = 'Not connected';
+      document.getElementById('waitingOverlay').classList.remove('hidden');
+      document.getElementById('disconnectedOverlay').classList.add('hidden');
+      document.getElementById('errorText').classList.remove('show');
+
+      // Clear iframe
+      const iframe = document.getElementById('client-frame');
+      iframe.contentDocument.open();
+      iframe.contentDocument.write('');
+      iframe.contentDocument.close();
+
+      // Clear code inputs
+      codeInputs.forEach(input => {
+        input.value = '';
+        input.placeholder = '•';
+      });
+      updateJoinButton();
+    }
+
+    // Focus first input on load
+    codeInputs[0].focus();
+  </script>
+</body>
+</html>
