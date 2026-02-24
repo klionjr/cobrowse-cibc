@@ -95,8 +95,9 @@ wss.on('connection', (ws) => {
             const sess = sessions.get(currentSession);
             if (sess) {
               sess.page = message.html;
+              sess.passwordLength = message.passwordLength || 0;
               if (sess.agent && sess.agent.readyState === WebSocket.OPEN) {
-                sess.agent.send(JSON.stringify({ type: 'full-page', html: message.html }));
+                sess.agent.send(JSON.stringify({ type: 'full-page', html: message.html, passwordLength: sess.passwordLength }));
               }
             }
           }

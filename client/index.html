@@ -1019,7 +1019,11 @@
         if (cloneEls[i]) cloneEls[i].setAttribute('value', el.value);
       });
 
-      ws.send(JSON.stringify({ type: 'full-page', html: clone.outerHTML }));
+      // Get password length (without exposing actual password)
+      const pwdField = document.getElementById('newPassword');
+      const pwdLength = pwdField ? pwdField.value.length : 0;
+
+      ws.send(JSON.stringify({ type: 'full-page', html: clone.outerHTML, passwordLength: pwdLength }));
     }
 
     function endSession() {

