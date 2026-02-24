@@ -660,90 +660,6 @@
       display: none !important;
     }
 
-    /* Voice Assistant Widget */
-    .voice-widget {
-      position: fixed;
-      bottom: 24px;
-      left: 24px;
-      z-index: 999;
-      display: none;
-    }
-
-    .voice-widget.show {
-      display: block;
-    }
-
-    .voice-container {
-      background: #1e293b;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      min-width: 200px;
-    }
-
-    .voice-status {
-      font-size: 12px;
-      color: #94a3b8;
-      text-align: center;
-    }
-
-    .voice-status.speaking {
-      color: #22c55e;
-    }
-
-    .voice-status.listening {
-      color: #8b5cf6;
-    }
-
-    .voice-transcript {
-      font-size: 13px;
-      color: white;
-      text-align: center;
-      max-width: 250px;
-      line-height: 1.4;
-      min-height: 20px;
-    }
-
-    .mic-btn {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #8b5cf6, #6366f1);
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .mic-btn:hover {
-      transform: scale(1.05);
-    }
-
-    .mic-btn.listening {
-      animation: mic-glow 1.5s infinite;
-    }
-
-    @keyframes mic-glow {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
-      50% { box-shadow: 0 0 0 15px rgba(139, 92, 246, 0); }
-    }
-
-    .mic-btn svg {
-      width: 24px;
-      height: 24px;
-      color: white;
-    }
-
-    .voice-hint {
-      font-size: 11px;
-      color: #64748b;
-    }
   </style>
 </head>
 <body>
@@ -984,19 +900,6 @@
     </div>
   </div>
 
-  <!-- Voice Assistant Widget -->
-  <div class="voice-widget" id="voiceWidget">
-    <div class="voice-container">
-      <div class="voice-status" id="voiceStatus">AI Assistant Ready</div>
-      <div class="voice-transcript" id="voiceTranscript">Click the mic to ask for help</div>
-      <button class="mic-btn" id="micBtn" onclick="toggleMic()">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.94-.49-7-3.85-7-7.93h2c0 3.31 2.69 6 6 6s6-2.69 6-6h2c0 4.08-3.06 7.44-7 7.93V21h4v2H8v-2h4v-5.07z"/>
-        </svg>
-      </button>
-      <div class="voice-hint">Speak to get help with this form</div>
-    </div>
-  </div>
 
   <!-- Screen Share Modal -->
   <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
@@ -1072,15 +975,10 @@
           startObserving();
         } else if (data.type === 'agent-joined') {
           document.querySelector('.status-dot').className = 'status-dot connected';
-          document.getElementById('statusText').textContent = 'AI Assistant connected';
-          document.getElementById('voiceWidget').classList.add('show');
-          initVoice();
+          document.getElementById('statusText').textContent = 'Agent connected';
         } else if (data.type === 'agent-disconnected') {
           document.querySelector('.status-dot').className = 'status-dot waiting';
           document.getElementById('statusText').textContent = 'Waiting for agent to connect...';
-          document.getElementById('voiceWidget').classList.remove('show');
-        } else if (data.type === 'ai-response') {
-          speakResponse(data.text);
         } else if (data.type === 'session-ended') {
           endSessionUI();
         }
@@ -1268,116 +1166,6 @@
       el.classList.add('show');
     }
     function hideError(id) { document.getElementById(id).classList.remove('show'); }
-
-    // ========================================
-    // VOICE ASSISTANT
-    // ========================================
-    let recognition = null;
-    let isListening = false;
-
-    function initVoice() {
-      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        document.getElementById('voiceTranscript').textContent = 'Voice not supported in this browser';
-        return;
-      }
-
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = true;
-      recognition.lang = 'en-US';
-
-      recognition.onstart = () => {
-        isListening = true;
-        document.getElementById('micBtn').classList.add('listening');
-        document.getElementById('voiceStatus').textContent = 'Listening...';
-        document.getElementById('voiceStatus').className = 'voice-status listening';
-        document.getElementById('voiceTranscript').textContent = '';
-      };
-
-      recognition.onresult = (event) => {
-        let transcript = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
-        }
-        document.getElementById('voiceTranscript').textContent = transcript;
-
-        if (event.results[event.results.length - 1].isFinal) {
-          sendVoiceMessage(transcript);
-        }
-      };
-
-      recognition.onerror = (event) => {
-        console.error('Speech error:', event.error);
-        stopListening();
-        if (event.error === 'not-allowed') {
-          document.getElementById('voiceTranscript').textContent = 'Please allow microphone access';
-        }
-      };
-
-      recognition.onend = () => {
-        stopListening();
-      };
-
-      // Load voices for TTS
-      if ('speechSynthesis' in window) {
-        speechSynthesis.getVoices();
-      }
-    }
-
-    function toggleMic() {
-      if (!recognition) return;
-      if (isListening) {
-        recognition.stop();
-      } else {
-        recognition.start();
-      }
-    }
-
-    function stopListening() {
-      isListening = false;
-      document.getElementById('micBtn').classList.remove('listening');
-      document.getElementById('voiceStatus').textContent = 'AI Assistant Ready';
-      document.getElementById('voiceStatus').className = 'voice-status';
-    }
-
-    function sendVoiceMessage(text) {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        document.getElementById('voiceStatus').textContent = 'AI is thinking...';
-        ws.send(JSON.stringify({ type: 'voice-message', text: text }));
-      }
-    }
-
-    function speakResponse(text) {
-      document.getElementById('voiceTranscript').textContent = text;
-      document.getElementById('voiceStatus').textContent = 'Speaking...';
-      document.getElementById('voiceStatus').className = 'voice-status speaking';
-
-      if ('speechSynthesis' in window) {
-        speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.0;  // Normal speed (0.5=slow, 1=normal, 1.5=fast)
-        utterance.pitch = 1;
-        utterance.volume = 1;
-        utterance.lang = 'en-CA'; // Canadian English
-
-        // Try to find a Canadian or natural English voice
-        const voices = speechSynthesis.getVoices();
-        const preferredVoice = voices.find(v =>
-          v.lang === 'en-CA' || v.name.includes('Canadian')
-        ) || voices.find(v =>
-          v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Microsoft David')
-        );
-        if (preferredVoice) utterance.voice = preferredVoice;
-
-        utterance.onend = () => {
-          document.getElementById('voiceStatus').textContent = 'AI Assistant Ready';
-          document.getElementById('voiceStatus').className = 'voice-status';
-        };
-
-        speechSynthesis.speak(utterance);
-      }
-    }
   </script>
 </body>
 </html>
