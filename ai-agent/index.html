@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Support Assistant - CIBC Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>AI Support Assistant - CIBC Co-Browse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <style>
     * {
@@ -13,20 +16,20 @@
     }
 
     body {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background: #0f172a;
+      font-family: 'Open Sans', Arial, sans-serif;
+      background: #c41f3e;
       min-height: 100vh;
       color: white;
     }
 
     /* Header */
     .agent-header {
-      background: #1e293b;
+      background: #a01830;
       padding: 12px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid #334155;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .header-left {
@@ -35,13 +38,17 @@
       gap: 16px;
     }
 
+    .header-logo {
+      height: 32px;
+    }
+
     .header-title {
       font-size: 16px;
       font-weight: 600;
     }
 
     .header-badge {
-      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      background: rgba(255,255,255,0.2);
       padding: 4px 10px;
       border-radius: 4px;
       font-size: 11px;
@@ -57,8 +64,8 @@
     }
 
     .session-badge {
-      background: #1e293b;
-      border: 1px solid #475569;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.3);
       padding: 8px 16px;
       border-radius: 6px;
       font-family: 'Courier New', monospace;
@@ -76,14 +83,14 @@
       align-items: center;
       gap: 8px;
       font-size: 13px;
-      color: #94a3b8;
+      color: rgba(255,255,255,0.8);
     }
 
     .status-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #64748b;
+      background: rgba(255,255,255,0.5);
     }
 
     .status-dot.connected {
@@ -96,14 +103,30 @@
       50% { opacity: 0.5; }
     }
 
+    .logout-btn {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
     /* Main Layout */
     .main-layout {
       display: flex;
       height: calc(100vh - 52px);
     }
 
-    /* Setup Panel */
-    .setup-panel {
+    /* Auth Panel */
+    .auth-panel {
       flex: 1;
       display: flex;
       align-items: center;
@@ -111,20 +134,125 @@
       padding: 40px;
     }
 
+    .auth-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 48px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      color: #333;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+
+    .auth-logo {
+      margin-bottom: 24px;
+    }
+
+    .auth-logo img {
+      height: 48px;
+    }
+
+    .auth-card h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    .auth-card > p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #c41f3e;
+      box-shadow: 0 0 0 2px rgba(196, 31, 62, 0.2);
+    }
+
+    .login-btn {
+      width: 100%;
+      background: #c41f3e;
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+      -webkit-appearance: none;
+    }
+
+    .login-btn:hover {
+      background: #a01830;
+    }
+
+    .error-text {
+      color: #dc2626;
+      font-size: 13px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .error-text.show {
+      display: block;
+    }
+
+    /* Setup Panel */
+    .setup-panel {
+      flex: 1;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .setup-panel.active {
+      display: flex;
+    }
+
     .setup-card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 12px;
+      background: #fff;
+      border-radius: 8px;
       padding: 48px;
       width: 100%;
       max-width: 480px;
       text-align: center;
+      color: #333;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     }
 
     .setup-icon {
       width: 80px;
       height: 80px;
-      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      background: #c41f3e;
       border-radius: 20px;
       display: flex;
       align-items: center;
@@ -142,10 +270,11 @@
       font-size: 24px;
       font-weight: 600;
       margin-bottom: 8px;
+      color: #333;
     }
 
     .setup-card > p {
-      color: #94a3b8;
+      color: #666;
       font-size: 14px;
       margin-bottom: 32px;
     }
@@ -157,9 +286,9 @@
 
     .setup-section label {
       display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: #94a3b8;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
       margin-bottom: 8px;
     }
 
@@ -173,10 +302,10 @@
     .code-input {
       width: 48px;
       height: 56px;
-      background: #0f172a;
-      border: 2px solid #334155;
-      border-radius: 8px;
-      color: white;
+      background: #fff;
+      border: 2px solid #333;
+      border-radius: 4px;
+      color: #333;
       font-size: 24px;
       font-weight: 600;
       text-align: center;
@@ -187,38 +316,40 @@
 
     .code-input:focus {
       outline: none;
-      border-color: #8b5cf6;
+      border-color: #c41f3e;
+      box-shadow: 0 0 0 2px rgba(196, 31, 62, 0.2);
     }
 
     .api-input {
       width: 100%;
-      background: #0f172a;
-      border: 2px solid #334155;
-      border-radius: 8px;
-      color: white;
+      background: #fff;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: #333;
       font-size: 14px;
-      padding: 14px 16px;
+      padding: 12px 14px;
       font-family: 'Courier New', monospace;
       transition: border-color 0.2s;
     }
 
     .api-input:focus {
       outline: none;
-      border-color: #8b5cf6;
+      border-color: #c41f3e;
+      box-shadow: 0 0 0 2px rgba(196, 31, 62, 0.2);
     }
 
     .api-input::placeholder {
-      color: #475569;
+      color: #999;
     }
 
     .api-hint {
       font-size: 12px;
-      color: #64748b;
+      color: #666;
       margin-top: 8px;
     }
 
     .api-hint a {
-      color: #8b5cf6;
+      color: #c41f3e;
       text-decoration: none;
     }
 
@@ -228,36 +359,27 @@
 
     .connect-btn {
       width: 100%;
-      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      background: #c41f3e;
       color: white;
       border: none;
       padding: 14px 24px;
-      border-radius: 8px;
-      font-size: 15px;
+      border-radius: 4px;
+      font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: opacity 0.2s;
+      transition: background 0.2s;
       margin-top: 16px;
+      font-family: inherit;
+      -webkit-appearance: none;
     }
 
     .connect-btn:hover:not(:disabled) {
-      opacity: 0.9;
+      background: #a01830;
     }
 
     .connect-btn:disabled {
-      background: #475569;
+      background: #ccc;
       cursor: not-allowed;
-    }
-
-    .error-text {
-      color: #ef4444;
-      font-size: 13px;
-      margin-top: 16px;
-      display: none;
-    }
-
-    .error-text.show {
-      display: block;
     }
 
     /* Viewer Panel */
@@ -265,7 +387,7 @@
       flex: 1;
       display: none;
       flex-direction: column;
-      background: #0f172a;
+      background: #f5f5f5;
     }
 
     .viewer-panel.active {
@@ -302,7 +424,7 @@
     }
 
     .live-badge {
-      background: #dc2626;
+      background: #22c55e;
       color: white;
       padding: 4px 10px;
       border-radius: 4px;
@@ -323,33 +445,34 @@
     }
 
     .end-btn {
-      background: transparent;
-      color: #ef4444;
-      border: 1px solid #ef4444;
+      background: #c41f3e;
+      color: white;
+      border: none;
       padding: 8px 16px;
-      border-radius: 6px;
+      border-radius: 4px;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
+      font-family: inherit;
     }
 
     .end-btn:hover {
-      background: rgba(239, 68, 68, 0.1);
+      background: #a01830;
     }
 
     .browser-window {
-      background: #1e293b;
-      border-radius: 12px;
+      background: white;
+      border-radius: 8px;
       overflow: hidden;
       flex: 1;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
     .browser-bar {
-      background: #334155;
+      background: #e5e5e5;
       padding: 10px 14px;
       display: flex;
       align-items: center;
@@ -373,11 +496,12 @@
 
     .browser-address {
       flex: 1;
-      background: #1e293b;
+      background: white;
       padding: 6px 12px;
-      border-radius: 6px;
+      border-radius: 4px;
       font-size: 12px;
-      color: #94a3b8;
+      color: #666;
+      border: 1px solid #ddd;
     }
 
     .browser-viewport {
@@ -400,7 +524,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: #f8fafc;
+      background: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -415,8 +539,8 @@
     .spinner {
       width: 40px;
       height: 40px;
-      border: 3px solid #e2e8f0;
-      border-top-color: #8b5cf6;
+      border: 3px solid #eee;
+      border-top-color: #c41f3e;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
@@ -426,31 +550,33 @@
     }
 
     .waiting-text {
-      color: #64748b;
+      color: #666;
       font-size: 14px;
     }
 
     /* AI Chat Section */
     .chat-section {
       width: 400px;
-      background: #1e293b;
-      border-left: 1px solid #334155;
+      background: white;
+      border-left: 1px solid #ddd;
       display: flex;
       flex-direction: column;
     }
 
     .chat-header {
       padding: 16px 20px;
-      border-bottom: 1px solid #334155;
+      border-bottom: 1px solid #ddd;
       display: flex;
       align-items: center;
       gap: 12px;
+      background: #c41f3e;
+      color: white;
     }
 
     .ai-avatar {
       width: 40px;
       height: 40px;
-      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      background: rgba(255,255,255,0.2);
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -470,7 +596,7 @@
 
     .ai-info p {
       font-size: 12px;
-      color: #64748b;
+      opacity: 0.8;
     }
 
     .chat-messages {
@@ -480,6 +606,7 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+      background: #f9f9f9;
     }
 
     .message {
@@ -491,22 +618,23 @@
     }
 
     .message.ai {
-      background: #334155;
-      color: white;
+      background: white;
+      color: #333;
       align-self: flex-start;
       border-bottom-left-radius: 4px;
+      border: 1px solid #ddd;
     }
 
     .message.user {
-      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      background: #c41f3e;
       color: white;
       align-self: flex-end;
       border-bottom-right-radius: 4px;
     }
 
     .message.system {
-      background: #0f172a;
-      color: #94a3b8;
+      background: #f0f0f0;
+      color: #666;
       font-size: 12px;
       text-align: center;
       align-self: center;
@@ -527,7 +655,7 @@
     .thinking-dots span {
       width: 8px;
       height: 8px;
-      background: #64748b;
+      background: #c41f3e;
       border-radius: 50%;
       animation: thinking 1.4s infinite;
     }
@@ -543,18 +671,19 @@
     /* Voice Controls */
     .voice-controls {
       padding: 20px;
-      border-top: 1px solid #334155;
+      border-top: 1px solid #ddd;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 12px;
+      background: white;
     }
 
     .mic-button {
       width: 64px;
       height: 64px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      background: #c41f3e;
       border: none;
       cursor: pointer;
       display: flex;
@@ -569,13 +698,13 @@
 
     .mic-button.listening {
       animation: mic-pulse 1.5s infinite;
-      box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+      box-shadow: 0 0 0 0 rgba(196, 31, 62, 0.7);
     }
 
     @keyframes mic-pulse {
-      0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
-      70% { box-shadow: 0 0 0 20px rgba(139, 92, 246, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+      0% { box-shadow: 0 0 0 0 rgba(196, 31, 62, 0.7); }
+      70% { box-shadow: 0 0 0 20px rgba(196, 31, 62, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(196, 31, 62, 0); }
     }
 
     .mic-button svg {
@@ -595,11 +724,11 @@
 
     .voice-hint {
       font-size: 13px;
-      color: #64748b;
+      color: #666;
     }
 
     .voice-hint.listening {
-      color: #8b5cf6;
+      color: #c41f3e;
     }
 
     /* Transcript */
@@ -607,16 +736,17 @@
       width: 100%;
       min-height: 44px;
       padding: 12px 16px;
-      background: #0f172a;
+      background: #f5f5f5;
       border-radius: 8px;
       font-size: 13px;
-      color: #94a3b8;
+      color: #666;
       text-align: center;
+      border: 1px solid #ddd;
     }
 
     .transcript.active {
-      color: white;
-      border: 1px solid #8b5cf6;
+      color: #333;
+      border-color: #c41f3e;
     }
 
     .hidden {
@@ -635,12 +765,54 @@
     .cursor-indicator.show {
       display: block;
     }
+
+    /* Mobile Responsive */
+    @media screen and (max-width: 768px) {
+      .agent-header {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 16px;
+      }
+
+      .header-left, .header-right {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .split-container {
+        flex-direction: column;
+      }
+
+      .chat-section {
+        width: 100%;
+        height: 300px;
+      }
+
+      .auth-panel, .setup-panel {
+        padding: 20px;
+      }
+
+      .auth-card, .setup-card {
+        padding: 32px 24px;
+      }
+
+      .code-inputs {
+        gap: 6px;
+      }
+
+      .code-input {
+        width: 40px;
+        height: 48px;
+        font-size: 20px;
+      }
+    }
   </style>
 </head>
 <body>
   <!-- Header -->
   <header class="agent-header">
     <div class="header-left">
+      <img src="https://mma.prnewswire.com/media/1632139/CIBC_CIBC_unveils_new_look_symbolizing_the_bank_s_purpose_of_hel.jpg?p=facebook" alt="CIBC" class="header-logo">
       <span class="header-title">AI Support Assistant</span>
       <span class="header-badge">Gemini Vision</span>
     </div>
@@ -650,11 +822,38 @@
         <span class="status-dot" id="statusDot"></span>
         <span id="connectionText">Not connected</span>
       </div>
+      <button class="logout-btn hidden" id="logoutBtn" onclick="logout()">Logout</button>
     </div>
   </header>
 
   <!-- Main Content -->
   <main class="main-layout">
+    <!-- Auth Panel -->
+    <div class="auth-panel" id="authPanel">
+      <div class="auth-card">
+        <div class="auth-logo">
+          <img src="https://mma.prnewswire.com/media/1632139/CIBC_CIBC_unveils_new_look_symbolizing_the_bank_s_purpose_of_hel.jpg?p=facebook" alt="CIBC" style="height: 48px;">
+        </div>
+        <h2>AI Agent Login</h2>
+        <p>Sign in to access the AI co-browse assistant</p>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-input" id="usernameInput" placeholder="Enter your username" autocomplete="username">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="passwordInput" placeholder="Enter your password" autocomplete="current-password">
+          </div>
+
+          <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+          <p class="error-text" id="loginErrorText">Invalid username or password</p>
+        </form>
+      </div>
+    </div>
+
     <!-- Setup Panel -->
     <div class="setup-panel" id="setupPanel">
       <div class="setup-card">
@@ -684,11 +883,6 @@
           <p class="api-hint">Get your free key at <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></p>
         </div>
 
-        <div class="setup-section">
-          <label>Agent Authentication Key</label>
-          <input type="password" class="api-input" id="agentKeyInput" placeholder="Enter your agent key">
-        </div>
-
         <button class="connect-btn" id="connectBtn" disabled>Connect & Start Assistant</button>
         <p class="error-text" id="errorText">Session not found or API key invalid.</p>
       </div>
@@ -705,7 +899,7 @@
                 <span class="live-dot"></span>
                 LIVE
               </div>
-              <span style="color: #94a3b8; font-size: 13px;">Customer's Screen</span>
+              <span style="color: #666; font-size: 13px;">Customer's Screen</span>
             </div>
             <button class="end-btn" onclick="endSession()">End Session</button>
           </div>
@@ -727,7 +921,7 @@
               <iframe id="client-frame" sandbox="allow-same-origin"></iframe>
               <div class="cursor-indicator" id="cursorIndicator">
                 <svg width="24" height="24" viewBox="0 0 24 24">
-                  <path fill="#8b5cf6" stroke="#fff" stroke-width="1.5" d="M5.5 3.21V20.8l5.71-5.71h8.29L5.5 3.21z"/>
+                  <path fill="#c41f3e" stroke="#fff" stroke-width="1.5" d="M5.5 3.21V20.8l5.71-5.71h8.29L5.5 3.21z"/>
                 </svg>
               </div>
             </div>
@@ -763,6 +957,50 @@
 
   <script>
     // ========================================
+    // AUTHENTICATION
+    // ========================================
+    const VALID_USERNAME = 'Ellaite';
+    const VALID_PASSWORD = 'Ellaite';
+    let agentKey = '';
+    let isLoggedIn = false;
+
+    // Check if already logged in
+    if (sessionStorage.getItem('agentLoggedIn') === 'true') {
+      agentKey = sessionStorage.getItem('agentKey') || '';
+      showSetupPanel();
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById('usernameInput').value;
+      const password = document.getElementById('passwordInput').value;
+
+      if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+        agentKey = 'demo-secret-change-in-production';
+        sessionStorage.setItem('agentLoggedIn', 'true');
+        sessionStorage.setItem('agentKey', agentKey);
+        showSetupPanel();
+      } else {
+        document.getElementById('loginErrorText').classList.add('show');
+      }
+    });
+
+    function showSetupPanel() {
+      isLoggedIn = true;
+      document.getElementById('authPanel').classList.add('hidden');
+      document.getElementById('setupPanel').classList.add('active');
+      document.getElementById('logoutBtn').classList.remove('hidden');
+      codeInputs[0].focus();
+    }
+
+    function logout() {
+      sessionStorage.removeItem('agentLoggedIn');
+      sessionStorage.removeItem('agentKey');
+      location.reload();
+    }
+
+    // ========================================
     // CONFIGURATION
     // ========================================
     let ws = null;
@@ -770,7 +1008,6 @@
     let apiKey = '';
     let conversationHistory = [];
 
-    // System prompt that "trains" the AI on the password reset flow
     const SYSTEM_PROMPT = `You are an expert CIBC phone support agent. You can SEE the customer's screen in real-time.
 
 STRICT RULES:
@@ -787,46 +1024,25 @@ SCREEN ANALYSIS - Carefully examine:
 
 STEP 1 - CARD DETAILS - CHECK FORMATS:
 - Card number: Must be exactly 16 digits (shown as XXXX XXXX XXXX XXXX). Located on BACK of card.
-  - If less than 16 digits: "Your card number looks incomplete. It should be 16 digits."
-  - If has letters: "Card number should only contain numbers."
 - Expiry date: Must be MM/YY format (e.g., 03/25)
-  - If wrong format: "Please enter expiry as MM/YY, like 03/25"
 - Phone number: Must be 10 digits in format (XXX) XXX-XXXX
-  - If incomplete: "Please enter your full 10-digit phone number"
 
 STEP 2 - VERIFICATION CODE - CHECK FORMAT:
 - Must be exactly 6 digits, one per box
 - All boxes must be filled before clicking Verify
-- If boxes are empty: "Enter the 6-digit code from the text message on your phone"
-- If partially filled: "Please fill in all 6 boxes with the code from your phone"
-- If not received: Tell them to click "Resend code" link at bottom
 
 STEP 3 - CREATE PASSWORD - CHECK REQUIREMENTS:
-- Minimum 16 characters (check if it looks long enough)
+- Minimum 16 characters
 - Must include: uppercase, lowercase, and number
 - Both password fields must match
-- Look at the checkmarks on the right - green = requirement met
-- If requirements not met: "Make sure your password has at least 16 characters with uppercase, lowercase, and a number"
-- If passwords don't match: "Make sure both password fields match exactly"
 
-RESPOND INTELLIGENTLY:
-- First check: Is there a format error in any filled field?
-- Then check: What's the next empty field?
-- If format is wrong: Point out the specific error and how to fix it
-- If format is correct: Guide them to the next step
-- Keep responses clear and concise (1-2 sentences)
-
-Examples:
-- "I see you're on step 1 and the card number field is empty. Flip your CIBC card over and enter the 16-digit number from the back."
-- "Your card number looks good, but the expiry date needs to be in MM/YY format, like 03/25."
-- "I notice the phone number is missing a few digits. Please enter all 10 digits of your phone number."`;
+Respond with clear, concise guidance in 1-2 sentences.`;
 
     // ========================================
     // SETUP & CONNECTION
     // ========================================
     const codeInputs = document.querySelectorAll('.code-input');
 
-    // Code input handling - copied from working agent page
     codeInputs.forEach((input, index) => {
       input.addEventListener('input', (e) => {
         const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -854,24 +1070,14 @@ Examples:
         updateConnectButton();
         if (pasted.length >= 6) codeInputs[5].focus();
       });
-
-      input.addEventListener('focus', () => {
-        input.placeholder = '';
-      });
-
-      input.addEventListener('blur', () => {
-        if (!input.value) input.placeholder = '';
-      });
     });
 
     document.getElementById('apiKeyInput').addEventListener('input', updateConnectButton);
-    document.getElementById('agentKeyInput').addEventListener('input', updateConnectButton);
 
     function updateConnectButton() {
       const code = Array.from(codeInputs).map(i => i.value).join('');
       const geminiKey = document.getElementById('apiKeyInput').value;
-      const agentKey = document.getElementById('agentKeyInput').value;
-      document.getElementById('connectBtn').disabled = code.length !== 6 || geminiKey.length < 10 || !agentKey;
+      document.getElementById('connectBtn').disabled = code.length !== 6 || geminiKey.length < 10;
     }
 
     document.getElementById('connectBtn').addEventListener('click', connect);
@@ -879,7 +1085,6 @@ Examples:
     function connect() {
       sessionCode = Array.from(codeInputs).map(i => i.value).join('');
       apiKey = document.getElementById('apiKeyInput').value;
-      const agentKey = document.getElementById('agentKeyInput').value;
       document.getElementById('errorText').classList.remove('show');
 
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -930,21 +1135,15 @@ Examples:
       addMessage('user', text);
       document.getElementById('transcript').textContent = 'Processing: "' + text + '"';
 
-      // Show thinking indicator
       const thinkingId = addMessage('ai', '<div class="thinking-dots"><span></span><span></span><span></span></div>', true);
 
       try {
-        // Capture screenshot
         const screenshot = await captureScreenshot();
-
-        // Send to Gemini
         const response = await sendToGemini(text, screenshot);
 
-        // Remove thinking indicator and show response
         removeMessage(thinkingId);
         addMessage('ai', response);
 
-        // Send response back to client for TTS
         if (ws && ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({ type: 'ai-response', text: response }));
         }
@@ -961,7 +1160,7 @@ Examples:
     }
 
     function showViewer() {
-      document.getElementById('setupPanel').classList.add('hidden');
+      document.getElementById('setupPanel').classList.remove('active');
       document.getElementById('viewerPanel').classList.add('active');
       document.getElementById('sessionBadge').textContent = sessionCode;
       document.getElementById('sessionBadge').classList.add('show');
@@ -1015,9 +1214,9 @@ Examples:
         const canvas = await html2canvas(viewport, {
           useCORS: true,
           allowTaint: true,
-          scale: 0.5 // Reduce size for API
+          scale: 0.5
         });
-        return canvas.toDataURL('image/jpeg', 0.7).split(',')[1]; // Base64 without prefix
+        return canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
       } catch (e) {
         console.error('Screenshot failed:', e);
         return null;
@@ -1025,13 +1224,10 @@ Examples:
     }
 
     async function sendToGemini(userMessage, screenshotBase64) {
-      // Add to conversation history
       conversationHistory.push({ role: 'user', content: userMessage });
 
-      // Build the request with proper format for Gemini
       const parts = [];
 
-      // Add screenshot FIRST so Gemini sees it
       if (screenshotBase64) {
         parts.push({
           inlineData: {
@@ -1039,31 +1235,20 @@ Examples:
             data: screenshotBase64
           }
         });
-        console.log('Screenshot included, length:', screenshotBase64.length);
-      } else {
-        console.log('No screenshot available');
       }
 
-      // Then add the system prompt and user message
-      parts.push({ text: SYSTEM_PROMPT + `\n\nCustomer says: "${userMessage}"\n\nAnalyze the screenshot carefully:\n1. What step number is shown?\n2. Which fields are filled vs empty?\n3. What should they do next?\n\nRespond with specific, helpful guidance in 1-2 sentences.` });
+      parts.push({ text: SYSTEM_PROMPT + `\n\nCustomer says: "${userMessage}"\n\nAnalyze the screenshot and respond with specific, helpful guidance.` });
 
       const requestBody = {
-        contents: [{
-          parts: parts
-        }],
+        contents: [{ parts: parts }],
         generationConfig: {
           temperature: 0.3,
-          maxOutputTokens: 256,
-          thinkingConfig: {
-            thinkingBudget: 0
-          }
+          maxOutputTokens: 256
         }
       };
 
-      console.log('Sending to Gemini...');
-
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1072,14 +1257,11 @@ Examples:
       );
 
       const data = await response.json();
-      console.log('Gemini response:', JSON.stringify(data, null, 2));
 
       if (!response.ok) {
-        console.error('API error:', data);
         throw new Error(data.error?.message || `API error: ${response.status}`);
       }
 
-      // Extract text from all parts (in case of multiple parts)
       let aiResponse = '';
       const responseParts = data.candidates?.[0]?.content?.parts || [];
       for (const part of responseParts) {
@@ -1117,9 +1299,6 @@ Examples:
       const msg = document.getElementById(id);
       if (msg) msg.remove();
     }
-
-    // Focus first input on load
-    codeInputs[0].focus();
   </script>
 </body>
 </html>

@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Support Agent Dashboard - Co-Browse</title>
+  <title>Support Agent Dashboard - CIBC Co-Browse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -12,20 +15,20 @@
     }
 
     body {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background: #0f172a;
+      font-family: 'Open Sans', Arial, sans-serif;
+      background: #c41f3e;
       min-height: 100vh;
       color: white;
     }
 
     /* Header */
     .agent-header {
-      background: #1e293b;
+      background: #a01830;
       padding: 12px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid #334155;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .header-left {
@@ -34,13 +37,17 @@
       gap: 16px;
     }
 
+    .header-logo {
+      height: 32px;
+    }
+
     .header-title {
       font-size: 16px;
       font-weight: 600;
     }
 
     .header-badge {
-      background: #3b82f6;
+      background: rgba(255,255,255,0.2);
       padding: 4px 10px;
       border-radius: 4px;
       font-size: 11px;
@@ -56,8 +63,8 @@
     }
 
     .session-badge {
-      background: #1e293b;
-      border: 1px solid #475569;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.3);
       padding: 8px 16px;
       border-radius: 6px;
       font-family: 'Courier New', monospace;
@@ -75,14 +82,14 @@
       align-items: center;
       gap: 8px;
       font-size: 13px;
-      color: #94a3b8;
+      color: rgba(255,255,255,0.8);
     }
 
     .status-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #64748b;
+      background: rgba(255,255,255,0.5);
     }
 
     .status-dot.connected {
@@ -95,14 +102,30 @@
       50% { opacity: 0.5; }
     }
 
+    .logout-btn {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
     /* Main Layout */
     .main-layout {
       display: flex;
       height: calc(100vh - 52px);
     }
 
-    /* Join Panel */
-    .join-panel {
+    /* Auth Panel */
+    .auth-panel {
       flex: 1;
       display: flex;
       align-items: center;
@@ -110,20 +133,132 @@
       padding: 40px;
     }
 
+    .auth-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 48px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      color: #333;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+
+    .auth-logo {
+      margin-bottom: 24px;
+    }
+
+    .auth-logo img {
+      height: 48px;
+    }
+
+    .auth-card h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    .auth-card > p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #c41f3e;
+      box-shadow: 0 0 0 2px rgba(196, 31, 62, 0.2);
+    }
+
+    .login-btn {
+      width: 100%;
+      background: #c41f3e;
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .login-btn:hover {
+      background: #a01830;
+    }
+
+    .login-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .error-text {
+      color: #dc2626;
+      font-size: 13px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .error-text.show {
+      display: block;
+    }
+
+    /* Join Panel */
+    .join-panel {
+      flex: 1;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .join-panel.active {
+      display: flex;
+    }
+
     .join-card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 12px;
+      background: #fff;
+      border-radius: 8px;
       padding: 48px;
       width: 100%;
       max-width: 420px;
       text-align: center;
+      color: #333;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     }
 
     .join-icon {
       width: 64px;
       height: 64px;
-      background: #3b82f6;
+      background: #c41f3e;
       border-radius: 16px;
       display: flex;
       align-items: center;
@@ -141,10 +276,11 @@
       font-size: 24px;
       font-weight: 600;
       margin-bottom: 8px;
+      color: #333;
     }
 
-    .join-card p {
-      color: #94a3b8;
+    .join-card > p {
+      color: #666;
       font-size: 14px;
       margin-bottom: 32px;
     }
@@ -159,10 +295,10 @@
     .code-input {
       width: 48px;
       height: 56px;
-      background: #0f172a;
-      border: 2px solid #334155;
-      border-radius: 8px;
-      color: white;
+      background: #fff;
+      border: 2px solid #333;
+      border-radius: 4px;
+      color: #333;
       font-size: 24px;
       font-weight: 600;
       text-align: center;
@@ -173,84 +309,38 @@
 
     .code-input:focus {
       outline: none;
-      border-color: #3b82f6;
+      border-color: #c41f3e;
+      box-shadow: 0 0 0 2px rgba(196, 31, 62, 0.2);
     }
 
     .code-input::placeholder {
-      color: #475569;
+      color: #ccc;
     }
 
     .join-btn {
       width: 100%;
-      background: #3b82f6;
+      background: #c41f3e;
       color: white;
       border: none;
       padding: 14px 24px;
-      border-radius: 8px;
-      font-size: 15px;
+      border-radius: 4px;
+      font-size: 16px;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
-      /* iOS Safari fixes */
+      font-family: inherit;
       -webkit-appearance: none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      user-select: none;
-      -webkit-user-select: none;
     }
 
-    .join-btn:hover:not(:disabled),
-    .join-btn:active:not(:disabled) {
-      background: #2563eb;
+    .join-btn:hover:not(:disabled) {
+      background: #a01830;
     }
 
     .join-btn:disabled {
-      background: #475569;
+      background: #ccc;
       cursor: not-allowed;
-    }
-
-    .error-text {
-      color: #ef4444;
-      font-size: 13px;
-      margin-top: 16px;
-      display: none;
-    }
-
-    .error-text.show {
-      display: block;
-    }
-
-    .agent-key-group {
-      margin-bottom: 24px;
-    }
-
-    .agent-key-label {
-      display: block;
-      font-size: 13px;
-      color: #94a3b8;
-      margin-bottom: 8px;
-      text-align: left;
-    }
-
-    .agent-key-input {
-      width: 100%;
-      padding: 12px 16px;
-      background: #0f172a;
-      border: 2px solid #334155;
-      border-radius: 8px;
-      color: white;
-      font-size: 14px;
-      font-family: inherit;
-      transition: border-color 0.2s;
-    }
-
-    .agent-key-input:focus {
-      outline: none;
-      border-color: #3b82f6;
-    }
-
-    .agent-key-input::placeholder {
-      color: #475569;
     }
 
     /* Viewer Panel */
@@ -258,7 +348,7 @@
       flex: 1;
       display: none;
       flex-direction: column;
-      background: #0f172a;
+      background: #f5f5f5;
     }
 
     .viewer-panel.active {
@@ -266,12 +356,12 @@
     }
 
     .viewer-toolbar {
-      background: #1e293b;
+      background: #a01830;
       padding: 10px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid #334155;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .viewer-info {
@@ -281,7 +371,7 @@
     }
 
     .live-badge {
-      background: #dc2626;
+      background: #22c55e;
       color: white;
       padding: 4px 10px;
       border-radius: 4px;
@@ -302,16 +392,16 @@
     }
 
     .viewer-url {
-      color: #94a3b8;
+      color: rgba(255,255,255,0.8);
       font-size: 13px;
     }
 
     .char-count {
-      background: #334155;
+      background: rgba(255,255,255,0.1);
       padding: 6px 12px;
       border-radius: 6px;
       font-size: 13px;
-      color: #94a3b8;
+      color: white;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -324,26 +414,23 @@
     }
 
     .end-btn {
-      background: transparent;
-      color: #ef4444;
-      border: 1px solid #ef4444;
+      background: white;
+      color: #c41f3e;
+      border: none;
       padding: 8px 16px;
-      border-radius: 6px;
+      border-radius: 4px;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
-      /* iOS Safari fixes */
+      font-family: inherit;
       -webkit-appearance: none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      user-select: none;
-      -webkit-user-select: none;
     }
 
-    .end-btn:hover,
-    .end-btn:active {
-      background: rgba(239, 68, 68, 0.1);
+    .end-btn:hover {
+      background: #f5f5f5;
     }
 
     /* Iframe Container */
@@ -353,14 +440,14 @@
       display: flex;
       justify-content: center;
       overflow: auto;
-      background: #0f172a;
+      background: #f5f5f5;
     }
 
     .browser-window {
-      background: #1e293b;
-      border-radius: 12px;
+      background: white;
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       width: 100%;
       max-width: 1200px;
       display: flex;
@@ -368,7 +455,7 @@
     }
 
     .browser-bar {
-      background: #334155;
+      background: #e5e5e5;
       padding: 12px 16px;
       display: flex;
       align-items: center;
@@ -392,14 +479,15 @@
 
     .browser-address {
       flex: 1;
-      background: #1e293b;
+      background: white;
       padding: 8px 16px;
-      border-radius: 6px;
+      border-radius: 4px;
       font-size: 13px;
-      color: #94a3b8;
+      color: #666;
       display: flex;
       align-items: center;
       gap: 8px;
+      border: 1px solid #ddd;
     }
 
     .browser-address svg {
@@ -443,7 +531,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: #f8fafc;
+      background: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -458,8 +546,8 @@
     .spinner {
       width: 40px;
       height: 40px;
-      border: 3px solid #e2e8f0;
-      border-top-color: #3b82f6;
+      border: 3px solid #eee;
+      border-top-color: #c41f3e;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
@@ -469,7 +557,7 @@
     }
 
     .waiting-text {
-      color: #64748b;
+      color: #666;
       font-size: 14px;
     }
 
@@ -480,7 +568,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(239, 68, 68, 0.95);
+      background: rgba(196, 31, 62, 0.95);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -510,24 +598,22 @@
 
     .return-btn {
       background: white;
-      color: #ef4444;
+      color: #c41f3e;
       border: none;
       padding: 12px 24px;
-      border-radius: 6px;
+      border-radius: 4px;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       margin-top: 8px;
-      /* iOS Safari fixes */
+      font-family: inherit;
       -webkit-appearance: none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      user-select: none;
-      -webkit-user-select: none;
     }
 
-    .return-btn:active {
-      background: #f3f4f6;
+    .return-btn:hover {
+      background: #f5f5f5;
     }
 
     .hidden {
@@ -552,12 +638,12 @@
         min-height: calc(100vh - 100px);
       }
 
-      .join-panel {
+      .auth-panel, .join-panel {
         padding: 20px;
       }
 
-      .join-card {
-        padding: 24px 20px;
+      .auth-card, .join-card {
+        padding: 32px 24px;
       }
 
       .code-inputs {
@@ -616,11 +702,11 @@
         font-size: 18px;
       }
 
-      .join-card h2 {
+      .auth-card h2, .join-card h2 {
         font-size: 20px;
       }
 
-      .join-card p {
+      .auth-card > p, .join-card > p {
         font-size: 13px;
       }
 
@@ -635,7 +721,7 @@
         font-size: 16px;
       }
 
-      button, .join-btn, .end-btn, .return-btn {
+      button, .login-btn, .join-btn, .end-btn, .return-btn {
         cursor: pointer;
       }
     }
@@ -645,7 +731,8 @@
   <!-- Header -->
   <header class="agent-header">
     <div class="header-left">
-      <span class="header-title">Support Agent Dashboard</span>
+      <img src="https://mma.prnewswire.com/media/1632139/CIBC_CIBC_unveils_new_look_symbolizing_the_bank_s_purpose_of_hel.jpg?p=facebook" alt="CIBC" class="header-logo">
+      <span class="header-title">Agent Dashboard</span>
       <span class="header-badge">Co-Browse</span>
     </div>
     <div class="header-right">
@@ -654,11 +741,38 @@
         <span class="status-dot" id="statusDot"></span>
         <span id="connectionText">Not connected</span>
       </div>
+      <button class="logout-btn hidden" id="logoutBtn" onclick="logout()">Logout</button>
     </div>
   </header>
 
   <!-- Main Content -->
   <main class="main-layout">
+    <!-- Auth Panel -->
+    <div class="auth-panel" id="authPanel">
+      <div class="auth-card">
+        <div class="auth-logo">
+          <img src="https://mma.prnewswire.com/media/1632139/CIBC_CIBC_unveils_new_look_symbolizing_the_bank_s_purpose_of_hel.jpg?p=facebook" alt="CIBC" style="height: 48px;">
+        </div>
+        <h2>Agent Login</h2>
+        <p>Sign in to access the co-browse dashboard</p>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-input" id="usernameInput" placeholder="Enter your username" autocomplete="username">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="passwordInput" placeholder="Enter your password" autocomplete="current-password">
+          </div>
+
+          <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+          <p class="error-text" id="loginErrorText">Invalid username or password</p>
+        </form>
+      </div>
+    </div>
+
     <!-- Join Panel -->
     <div class="join-panel" id="joinPanel">
       <div class="join-card">
@@ -677,11 +791,6 @@
           <input type="text" class="code-input" maxlength="1" data-index="3" placeholder="•">
           <input type="text" class="code-input" maxlength="1" data-index="4" placeholder="•">
           <input type="text" class="code-input" maxlength="1" data-index="5" placeholder="•">
-        </div>
-
-        <div class="agent-key-group">
-          <label class="agent-key-label">Agent Authentication Key</label>
-          <input type="password" class="agent-key-input" id="agentKeyInput" placeholder="Enter your agent key">
         </div>
 
         <button class="join-btn" id="joinBtn" disabled>Connect to Session</button>
@@ -746,7 +855,7 @@
             <!-- Cursor indicator -->
             <div class="cursor-indicator" id="cursorIndicator">
               <svg width="24" height="24" viewBox="0 0 24 24">
-                <path fill="#3b82f6" stroke="#fff" stroke-width="1.5" d="M5.5 3.21V20.8l5.71-5.71h8.29L5.5 3.21z"/>
+                <path fill="#c41f3e" stroke="#fff" stroke-width="1.5" d="M5.5 3.21V20.8l5.71-5.71h8.29L5.5 3.21z"/>
               </svg>
             </div>
           </div>
@@ -756,6 +865,54 @@
   </main>
 
   <script>
+    // ========================================
+    // AUTHENTICATION
+    // ========================================
+    const VALID_USERNAME = 'Ellaite';
+    const VALID_PASSWORD = 'Ellaite';
+    let agentKey = '';
+    let isLoggedIn = false;
+
+    // Check if already logged in (session storage)
+    if (sessionStorage.getItem('agentLoggedIn') === 'true') {
+      agentKey = sessionStorage.getItem('agentKey') || '';
+      showJoinPanel();
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById('usernameInput').value;
+      const password = document.getElementById('passwordInput').value;
+
+      if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+        // Generate agent key from credentials (in production, get from server)
+        agentKey = 'demo-secret-change-in-production';
+        sessionStorage.setItem('agentLoggedIn', 'true');
+        sessionStorage.setItem('agentKey', agentKey);
+        showJoinPanel();
+      } else {
+        document.getElementById('loginErrorText').classList.add('show');
+      }
+    });
+
+    function showJoinPanel() {
+      isLoggedIn = true;
+      document.getElementById('authPanel').classList.add('hidden');
+      document.getElementById('joinPanel').classList.add('active');
+      document.getElementById('logoutBtn').classList.remove('hidden');
+      codeInputs[0].focus();
+    }
+
+    function logout() {
+      sessionStorage.removeItem('agentLoggedIn');
+      sessionStorage.removeItem('agentKey');
+      location.reload();
+    }
+
+    // ========================================
+    // SESSION JOINING
+    // ========================================
     let ws = null;
     let sessionCode = '';
     const codeInputs = document.querySelectorAll('.code-input');
@@ -800,26 +957,15 @@
 
     function updateJoinButton() {
       const code = Array.from(codeInputs).map(i => i.value).join('');
-      const agentKey = document.getElementById('agentKeyInput').value;
-      document.getElementById('joinBtn').disabled = code.length !== 6 || !agentKey;
+      document.getElementById('joinBtn').disabled = code.length !== 6;
     }
-
-    // Also check agent key input
-    document.getElementById('agentKeyInput').addEventListener('input', updateJoinButton);
 
     // Join session
     document.getElementById('joinBtn').addEventListener('click', joinSession);
 
     function joinSession() {
       sessionCode = Array.from(codeInputs).map(i => i.value).join('');
-      const agentKey = document.getElementById('agentKeyInput').value;
       document.getElementById('errorText').classList.remove('show');
-
-      if (!agentKey) {
-        document.getElementById('errorText').textContent = 'Please enter your agent authentication key.';
-        document.getElementById('errorText').classList.add('show');
-        return;
-      }
 
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       ws = new WebSocket(`${protocol}//${window.location.host}`);
@@ -869,7 +1015,7 @@
     }
 
     function showViewer() {
-      document.getElementById('joinPanel').classList.add('hidden');
+      document.getElementById('joinPanel').classList.remove('active');
       document.getElementById('viewerPanel').classList.add('active');
       document.getElementById('sessionBadge').textContent = sessionCode;
       document.getElementById('sessionBadge').classList.add('show');
@@ -938,7 +1084,7 @@
     function resetView() {
       if (ws) ws.close();
 
-      document.getElementById('joinPanel').classList.remove('hidden');
+      document.getElementById('joinPanel').classList.add('active');
       document.getElementById('viewerPanel').classList.remove('active');
       document.getElementById('sessionBadge').classList.remove('show');
       document.getElementById('statusDot').classList.remove('connected');
@@ -958,28 +1104,21 @@
         input.value = '';
         input.placeholder = '•';
       });
-      // Don't clear agent key on reset (convenience for agents)
       updateJoinButton();
     }
-
-    // Focus first input on load
-    codeInputs[0].focus();
 
     // ========================================
     // iOS SAFARI & CROSS-BROWSER SUPPORT
     // ========================================
     document.addEventListener('DOMContentLoaded', function() {
-      // Detect iOS
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
                     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
       if (isIOS) {
-        // Add touch support for all action buttons on iOS
-        document.querySelectorAll('.join-btn, .end-btn, .return-btn').forEach(btn => {
+        document.querySelectorAll('.login-btn, .join-btn, .end-btn, .return-btn, .logout-btn').forEach(btn => {
           btn.style.cursor = 'pointer';
         });
 
-        // Prevent double-tap zoom on buttons
         document.querySelectorAll('button').forEach(btn => {
           btn.addEventListener('touchend', function(e) {
             e.preventDefault();
@@ -992,13 +1131,11 @@
         });
       }
 
-      // Fix for 300ms tap delay on older browsers
       if ('ontouchstart' in window) {
         document.body.style.touchAction = 'manipulation';
       }
     });
 
-    // Polyfill for older browsers
     if (!Element.prototype.closest) {
       Element.prototype.closest = function(s) {
         var el = this;
