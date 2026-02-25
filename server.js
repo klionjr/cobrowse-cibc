@@ -181,6 +181,10 @@ const server = http.createServer((req, res) => {
         "const VALID_PASSWORD = 'Ellaite';",
         `const VALID_PASSWORD = '${AGENT_PASSWORD}';`
       );
+      content = content.replace(
+        "const AGENT_SECRET_KEY = 'demo-secret-change-in-production';",
+        `const AGENT_SECRET_KEY = '${AGENT_SECRET_KEY}';`
+      );
     }
 
     res.writeHead(200, { 'Content-Type': 'text/html' });

@@ -870,6 +870,7 @@
     // ========================================
     const VALID_USERNAME = 'Ellaite';
     const VALID_PASSWORD = 'Ellaite';
+    const AGENT_SECRET_KEY = 'demo-secret-change-in-production';
     let agentKey = '';
     let isLoggedIn = false;
 
@@ -886,8 +887,8 @@
       const password = document.getElementById('passwordInput').value.trim().toLowerCase();
 
       if (username === VALID_USERNAME.toLowerCase() && password === VALID_PASSWORD.toLowerCase()) {
-        // Generate agent key from credentials (in production, get from server)
-        agentKey = 'demo-secret-change-in-production';
+        // Use the configured agent secret key
+        agentKey = AGENT_SECRET_KEY;
         sessionStorage.setItem('agentLoggedIn', 'true');
         sessionStorage.setItem('agentKey', agentKey);
         showJoinPanel();
