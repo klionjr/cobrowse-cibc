@@ -11,6 +11,8 @@ const PORT = process.env.PORT || 3000;
 // ========================================
 // Set this in Render.com environment variables
 const AGENT_SECRET_KEY = process.env.AGENT_SECRET_KEY || 'demo-secret-change-in-production';
+const AGENT_USERNAME = process.env.AGENT_USERNAME || 'Ellaite';
+const AGENT_PASSWORD = process.env.AGENT_PASSWORD || 'Ellaite';
 const SESSION_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 const MAX_JOIN_ATTEMPTS = 5;
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
@@ -162,12 +164,25 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  fs.readFile(filePath, (err, content) => {
+  fs.readFile(filePath, 'utf8', (err, content) => {
     if (err) {
       res.writeHead(500);
       res.end('Error loading page');
       return;
     }
+
+    // Inject environment variables into agent page
+    if (filePath.includes('agent')) {
+      content = content.replace(
+        "const VALID_USERNAME = 'Ellaite';",
+        `const VALID_USERNAME = '${AGENT_USERNAME}';`
+      );
+      content = content.replace(
+        "const VALID_PASSWORD = 'Ellaite';",
+        `const VALID_PASSWORD = '${AGENT_PASSWORD}';`
+      );
+    }
+
     res.writeHead(200, { 'Content-Type': 'text/html' });
     res.end(content);
   });
@@ -434,6 +449,7 @@ server.listen(PORT, () => {
 ║   • Session timeout: ${SESSION_TIMEOUT_MS / 60000} minutes                                ║
 ║   • Rate limit: ${MAX_JOIN_ATTEMPTS} attempts per ${RATE_LIMIT_WINDOW_MS / 1000} seconds                          ║
 ║   • Agent key: ${isDefaultKey ? 'demo-secret-change-in-production' : '********'}             ║
+║   • Agent login: ${AGENT_USERNAME} / ********                              ║
 ║                                                                  ║
 ╠══════════════════════════════════════════════════════════════════╣
 ║                                                                  ║

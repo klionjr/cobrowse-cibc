@@ -882,10 +882,10 @@
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
-      const username = document.getElementById('usernameInput').value;
-      const password = document.getElementById('passwordInput').value;
+      const username = document.getElementById('usernameInput').value.trim().toLowerCase();
+      const password = document.getElementById('passwordInput').value.trim().toLowerCase();
 
-      if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+      if (username === VALID_USERNAME.toLowerCase() && password === VALID_PASSWORD.toLowerCase()) {
         // Generate agent key from credentials (in production, get from server)
         agentKey = 'demo-secret-change-in-production';
         sessionStorage.setItem('agentLoggedIn', 'true');
