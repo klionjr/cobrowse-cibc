@@ -10,7 +10,6 @@ const PORT = process.env.PORT || 3000;
 // SECURITY CONFIGURATION
 // ========================================
 // Set this in Render.com environment variables
-const AGENT_SECRET_KEY = process.env.AGENT_SECRET_KEY || 'demo-secret-change-in-production';
 const AGENT_USERNAME = process.env.AGENT_USERNAME || 'Ellaite';
 const AGENT_PASSWORD = process.env.AGENT_PASSWORD || 'Ellaite';
 const SESSION_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
@@ -46,20 +45,6 @@ function generateSessionCode() {
     return generateSessionCode();
   }
   return code;
-}
-
-// Validate agent secret key
-function validateAgentKey(providedKey) {
-  if (!providedKey || !AGENT_SECRET_KEY) return false;
-  // Timing-safe comparison to prevent timing attacks
-  try {
-    return crypto.timingSafeEqual(
-      Buffer.from(providedKey),
-      Buffer.from(AGENT_SECRET_KEY)
-    );
-  } catch {
-    return false;
-  }
 }
 
 // Rate limiting check
@@ -181,10 +166,6 @@ const server = http.createServer((req, res) => {
         "const VALID_PASSWORD = 'Ellaite';",
         `const VALID_PASSWORD = '${AGENT_PASSWORD}';`
       );
-      content = content.replace(
-        "const AGENT_SECRET_KEY = 'demo-secret-change-in-production';",
-        `const AGENT_SECRET_KEY = '${AGENT_SECRET_KEY}';`
-      );
     }
 
     res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -260,21 +241,7 @@ wss.on('connection', (ws, req) => {
             break;
           }
 
-          // 2. Validate agent secret key
-          if (!validateAgentKey(message.agentKey)) {
-            ws.send(JSON.stringify({
-              type: 'error',
-              message: 'Invalid agent credentials'
-            }));
-            logAudit('AUTH_FAILED', {
-              clientIP,
-              code: message.code,
-              reason: 'invalid_agent_key'
-            });
-            break;
-          }
-
-          // 3. Check if session exists
+          // 2. Check if session exists
           const session = sessions.get(message.code);
           if (!session || !session.client) {
             ws.send(JSON.stringify({
@@ -289,7 +256,7 @@ wss.on('connection', (ws, req) => {
             break;
           }
 
-          // 4. Check if session already has an agent
+          // 3. Check if session already has an agent
           if (session.agent && session.agent.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify({
               type: 'error',
@@ -303,7 +270,7 @@ wss.on('connection', (ws, req) => {
             break;
           }
 
-          // 5. Success - join the session
+          // 4. Success - join the session
           session.agent = ws;
           session.agentIP = clientIP;
           session.agentJoinedAt = Date.now();
@@ -428,8 +395,6 @@ wss.on('connection', (ws, req) => {
 });
 
 server.listen(PORT, () => {
-  const isDefaultKey = AGENT_SECRET_KEY === 'demo-secret-change-in-production';
-
   console.log(`
 ╔══════════════════════════════════════════════════════════════════╗
 ║                                                                  ║
@@ -448,11 +413,9 @@ server.listen(PORT, () => {
 ║                                                                  ║
 ╠══════════════════════════════════════════════════════════════════╣
 ║                                                                  ║
-║   SECURITY SETTINGS:                                             ║
-║   ${isDefaultKey ? '⚠️  USING DEFAULT AGENT KEY (set AGENT_SECRET_KEY env var)' : '✅ Agent secret key configured'}      ║
+║   SETTINGS:                                                      ║
 ║   • Session timeout: ${SESSION_TIMEOUT_MS / 60000} minutes                                ║
 ║   • Rate limit: ${MAX_JOIN_ATTEMPTS} attempts per ${RATE_LIMIT_WINDOW_MS / 1000} seconds                          ║
-║   • Agent key: ${isDefaultKey ? 'demo-secret-change-in-production' : '********'}             ║
 ║   • Agent login: ${AGENT_USERNAME} / ********                              ║
 ║                                                                  ║
 ╠══════════════════════════════════════════════════════════════════╣
@@ -462,8 +425,7 @@ server.listen(PORT, () => {
 ║   1. Open http://localhost:${PORT}/ in Tab 1 (Client)                ║
 ║   2. Open http://localhost:${PORT}/agent in Tab 2 (Agent)            ║
 ║   3. Client: Click "Share My Screen" → "Start Screen Share"      ║
-║   4. Agent: Enter session code + agent key                       ║
-║   5. For AI assistant, also enter your Gemini API key            ║
+║   4. Agent: Login and enter session code                         ║
 ║                                                                  ║
 ╚══════════════════════════════════════════════════════════════════╝
   `);

@@ -870,13 +870,10 @@
     // ========================================
     const VALID_USERNAME = 'Ellaite';
     const VALID_PASSWORD = 'Ellaite';
-    const AGENT_SECRET_KEY = 'demo-secret-change-in-production';
-    let agentKey = '';
     let isLoggedIn = false;
 
     // Check if already logged in (session storage)
     if (sessionStorage.getItem('agentLoggedIn') === 'true') {
-      agentKey = sessionStorage.getItem('agentKey') || '';
       showJoinPanel();
     }
 
@@ -887,10 +884,7 @@
       const password = document.getElementById('passwordInput').value.trim().toLowerCase();
 
       if (username === VALID_USERNAME.toLowerCase() && password === VALID_PASSWORD.toLowerCase()) {
-        // Use the configured agent secret key
-        agentKey = AGENT_SECRET_KEY;
         sessionStorage.setItem('agentLoggedIn', 'true');
-        sessionStorage.setItem('agentKey', agentKey);
         showJoinPanel();
       } else {
         document.getElementById('loginErrorText').classList.add('show');
@@ -907,7 +901,6 @@
 
     function logout() {
       sessionStorage.removeItem('agentLoggedIn');
-      sessionStorage.removeItem('agentKey');
       location.reload();
     }
 
@@ -974,8 +967,7 @@
       ws.onopen = () => {
         ws.send(JSON.stringify({
           type: 'join-session',
-          code: sessionCode,
-          agentKey: agentKey
+          code: sessionCode
         }));
       };
 
