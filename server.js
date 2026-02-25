@@ -2,21 +2,149 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const WebSocket = require('ws');
+const crypto = require('crypto');
 
 const PORT = process.env.PORT || 3000;
 
-// Store active sessions: { sessionCode: { client: ws, agent: ws, page: null } }
+// ========================================
+// SECURITY CONFIGURATION
+// ========================================
+// Set this in Render.com environment variables
+const AGENT_SECRET_KEY = process.env.AGENT_SECRET_KEY || 'demo-secret-change-in-production';
+const SESSION_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
+const MAX_JOIN_ATTEMPTS = 5;
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : null; // null = allow all (for demo), set in production
+
+// Store active sessions: { sessionCode: { client: ws, agent: ws, page: null, createdAt, expiresAt } }
 const sessions = new Map();
 
-// Generate a simple 6-character session code
+// Rate limiting: { ip: { attempts: number, windowStart: timestamp } }
+const rateLimits = new Map();
+
+// Audit log (in production, send to proper logging service)
+const auditLog = [];
+
+// ========================================
+// SECURITY FUNCTIONS
+// ========================================
+
+// Generate cryptographically secure session code
 function generateSessionCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const randomBytes = crypto.randomBytes(6);
   let code = '';
   for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
+    code += chars.charAt(randomBytes[i] % chars.length);
+  }
+  // Ensure code isn't already in use
+  if (sessions.has(code)) {
+    return generateSessionCode();
   }
   return code;
 }
+
+// Validate agent secret key
+function validateAgentKey(providedKey) {
+  if (!providedKey || !AGENT_SECRET_KEY) return false;
+  // Timing-safe comparison to prevent timing attacks
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(providedKey),
+      Buffer.from(AGENT_SECRET_KEY)
+    );
+  } catch {
+    return false;
+  }
+}
+
+// Rate limiting check
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const record = rateLimits.get(ip);
+
+  if (!record) {
+    rateLimits.set(ip, { attempts: 1, windowStart: now });
+    return { allowed: true, remaining: MAX_JOIN_ATTEMPTS - 1 };
+  }
+
+  // Reset window if expired
+  if (now - record.windowStart > RATE_LIMIT_WINDOW_MS) {
+    rateLimits.set(ip, { attempts: 1, windowStart: now });
+    return { allowed: true, remaining: MAX_JOIN_ATTEMPTS - 1 };
+  }
+
+  // Check if over limit
+  if (record.attempts >= MAX_JOIN_ATTEMPTS) {
+    const retryAfter = Math.ceil((record.windowStart + RATE_LIMIT_WINDOW_MS - now) / 1000);
+    return { allowed: false, retryAfter };
+  }
+
+  record.attempts++;
+  return { allowed: true, remaining: MAX_JOIN_ATTEMPTS - record.attempts };
+}
+
+// Audit logging
+function logAudit(event, details) {
+  const entry = {
+    timestamp: new Date().toISOString(),
+    event,
+    ...details
+  };
+  auditLog.push(entry);
+  console.log(`[AUDIT] ${entry.timestamp} | ${event} |`, JSON.stringify(details));
+
+  // Keep only last 1000 entries in memory (in production, persist to database/service)
+  if (auditLog.length > 1000) {
+    auditLog.shift();
+  }
+}
+
+// Get client IP (works with proxies like Render.com)
+function getClientIP(ws, req) {
+  if (req) {
+    return req.headers['x-forwarded-for']?.split(',')[0]?.trim()
+      || req.headers['x-real-ip']
+      || req.socket?.remoteAddress
+      || 'unknown';
+  }
+  return ws._socket?.remoteAddress || 'unknown';
+}
+
+// Clean up expired sessions
+function cleanupExpiredSessions() {
+  const now = Date.now();
+  for (const [code, session] of sessions) {
+    if (now > session.expiresAt) {
+      logAudit('SESSION_EXPIRED', { code, duration: now - session.createdAt });
+
+      if (session.client && session.client.readyState === WebSocket.OPEN) {
+        session.client.send(JSON.stringify({ type: 'session-ended', reason: 'expired' }));
+        session.client.close();
+      }
+      if (session.agent && session.agent.readyState === WebSocket.OPEN) {
+        session.agent.send(JSON.stringify({ type: 'session-ended', reason: 'expired' }));
+        session.agent.close();
+      }
+      sessions.delete(code);
+    }
+  }
+}
+
+// Run cleanup every minute
+setInterval(cleanupExpiredSessions, 60000);
+
+// Clean up old rate limit entries every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, record] of rateLimits) {
+    if (now - record.windowStart > RATE_LIMIT_WINDOW_MS * 2) {
+      rateLimits.delete(ip);
+    }
+  }
+}, 300000);
 
 // Simple static file server
 const server = http.createServer((req, res) => {
@@ -45,12 +173,33 @@ const server = http.createServer((req, res) => {
   });
 });
 
-// WebSocket server
-const wss = new WebSocket.Server({ server });
+// WebSocket server with origin validation
+const wss = new WebSocket.Server({
+  server,
+  verifyClient: (info, callback) => {
+    const origin = info.origin || info.req.headers.origin;
+    const ip = getClientIP(null, info.req);
 
-wss.on('connection', (ws) => {
+    // If ALLOWED_ORIGINS is set, validate origin
+    if (ALLOWED_ORIGINS && ALLOWED_ORIGINS.length > 0) {
+      const isAllowed = ALLOWED_ORIGINS.some(allowed =>
+        origin && (origin === allowed || origin.endsWith(allowed))
+      );
+      if (!isAllowed) {
+        logAudit('CONNECTION_REJECTED', { ip, origin, reason: 'invalid_origin' });
+        callback(false, 403, 'Forbidden');
+        return;
+      }
+    }
+
+    callback(true);
+  }
+});
+
+wss.on('connection', (ws, req) => {
   let currentSession = null;
   let role = null;
+  const clientIP = getClientIP(ws, req);
 
   ws.on('message', (data) => {
     try {
@@ -60,33 +209,103 @@ wss.on('connection', (ws) => {
         case 'create-session':
           // Client wants to create a new session
           const code = generateSessionCode();
-          sessions.set(code, { client: ws, agent: null, page: null, cursor: null });
+          const now = Date.now();
+          sessions.set(code, {
+            client: ws,
+            agent: null,
+            page: null,
+            cursor: null,
+            createdAt: now,
+            expiresAt: now + SESSION_TIMEOUT_MS,
+            clientIP: clientIP
+          });
           currentSession = code;
           role = 'client';
           ws.send(JSON.stringify({ type: 'session-created', code }));
-          console.log(`[${new Date().toLocaleTimeString()}] Session created: ${code}`);
+          logAudit('SESSION_CREATED', { code, clientIP });
           break;
 
         case 'join-session':
-          // Agent wants to join a session
-          const session = sessions.get(message.code);
-          if (session && session.client) {
-            session.agent = ws;
-            currentSession = message.code;
-            role = 'agent';
-            ws.send(JSON.stringify({ type: 'session-joined', code: message.code }));
+          // ========================================
+          // AGENT AUTHENTICATION & RATE LIMITING
+          // ========================================
 
-            // Send the current page state if available
-            if (session.page) {
-              ws.send(JSON.stringify({ type: 'full-page', html: session.page }));
-            }
-
-            // Notify client that agent joined
-            session.client.send(JSON.stringify({ type: 'agent-joined' }));
-            console.log(`[${new Date().toLocaleTimeString()}] Agent joined session: ${message.code}`);
-          } else {
-            ws.send(JSON.stringify({ type: 'error', message: 'Session not found or expired' }));
+          // 1. Check rate limit
+          const rateCheck = checkRateLimit(clientIP);
+          if (!rateCheck.allowed) {
+            ws.send(JSON.stringify({
+              type: 'error',
+              message: `Too many attempts. Try again in ${rateCheck.retryAfter} seconds.`
+            }));
+            logAudit('RATE_LIMITED', { clientIP, code: message.code });
+            break;
           }
+
+          // 2. Validate agent secret key
+          if (!validateAgentKey(message.agentKey)) {
+            ws.send(JSON.stringify({
+              type: 'error',
+              message: 'Invalid agent credentials'
+            }));
+            logAudit('AUTH_FAILED', {
+              clientIP,
+              code: message.code,
+              reason: 'invalid_agent_key'
+            });
+            break;
+          }
+
+          // 3. Check if session exists
+          const session = sessions.get(message.code);
+          if (!session || !session.client) {
+            ws.send(JSON.stringify({
+              type: 'error',
+              message: 'Session not found or expired'
+            }));
+            logAudit('JOIN_FAILED', {
+              clientIP,
+              code: message.code,
+              reason: 'session_not_found'
+            });
+            break;
+          }
+
+          // 4. Check if session already has an agent
+          if (session.agent && session.agent.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+              type: 'error',
+              message: 'Session already has an agent connected'
+            }));
+            logAudit('JOIN_FAILED', {
+              clientIP,
+              code: message.code,
+              reason: 'agent_already_connected'
+            });
+            break;
+          }
+
+          // 5. Success - join the session
+          session.agent = ws;
+          session.agentIP = clientIP;
+          session.agentJoinedAt = Date.now();
+          currentSession = message.code;
+          role = 'agent';
+
+          ws.send(JSON.stringify({ type: 'session-joined', code: message.code }));
+
+          // Send the current page state if available
+          if (session.page) {
+            ws.send(JSON.stringify({ type: 'full-page', html: session.page, passwordLength: session.passwordLength || 0 }));
+          }
+
+          // Notify client that agent joined
+          session.client.send(JSON.stringify({ type: 'agent-joined' }));
+
+          logAudit('AGENT_JOINED', {
+            code: message.code,
+            agentIP: clientIP,
+            clientIP: session.clientIP
+          });
           break;
 
         case 'full-page':
@@ -190,6 +409,8 @@ wss.on('connection', (ws) => {
 });
 
 server.listen(PORT, () => {
+  const isDefaultKey = AGENT_SECRET_KEY === 'demo-secret-change-in-production';
+
   console.log(`
 ╔══════════════════════════════════════════════════════════════════╗
 ║                                                                  ║
@@ -203,19 +424,26 @@ server.listen(PORT, () => {
 ║   Human Agent Dashboard:                                         ║
 ║   → http://localhost:${PORT}/agent                                   ║
 ║                                                                  ║
-║   AI Voice Assistant (NEW!):                                     ║
+║   AI Voice Assistant:                                            ║
 ║   → http://localhost:${PORT}/ai-agent                                ║
 ║                                                                  ║
 ╠══════════════════════════════════════════════════════════════════╣
 ║                                                                  ║
-║   HOW TO TEST AI ASSISTANT:                                      ║
+║   SECURITY SETTINGS:                                             ║
+║   ${isDefaultKey ? '⚠️  USING DEFAULT AGENT KEY (set AGENT_SECRET_KEY env var)' : '✅ Agent secret key configured'}      ║
+║   • Session timeout: ${SESSION_TIMEOUT_MS / 60000} minutes                                ║
+║   • Rate limit: ${MAX_JOIN_ATTEMPTS} attempts per ${RATE_LIMIT_WINDOW_MS / 1000} seconds                          ║
+║   • Agent key: ${isDefaultKey ? 'demo-secret-change-in-production' : '********'}             ║
+║                                                                  ║
+╠══════════════════════════════════════════════════════════════════╣
+║                                                                  ║
+║   HOW TO TEST:                                                   ║
 ║                                                                  ║
 ║   1. Open http://localhost:${PORT}/ in Tab 1 (Client)                ║
-║   2. Open http://localhost:${PORT}/ai-agent in Tab 2 (AI)            ║
-║   3. On Client: Click "Share My Screen" button                   ║
-║   4. On Client: Click "Start Screen Share" - note the code       ║
-║   5. On AI Agent: Enter code + your Gemini API key               ║
-║   6. Click microphone and speak - AI sees your screen!           ║
+║   2. Open http://localhost:${PORT}/agent in Tab 2 (Agent)            ║
+║   3. Client: Click "Share My Screen" → "Start Screen Share"      ║
+║   4. Agent: Enter session code + agent key                       ║
+║   5. For AI assistant, also enter your Gemini API key            ║
 ║                                                                  ║
 ╚══════════════════════════════════════════════════════════════════╝
   `);

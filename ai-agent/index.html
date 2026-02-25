@@ -684,6 +684,11 @@
           <p class="api-hint">Get your free key at <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></p>
         </div>
 
+        <div class="setup-section">
+          <label>Agent Authentication Key</label>
+          <input type="password" class="api-input" id="agentKeyInput" placeholder="Enter your agent key">
+        </div>
+
         <button class="connect-btn" id="connectBtn" disabled>Connect & Start Assistant</button>
         <p class="error-text" id="errorText">Session not found or API key invalid.</p>
       </div>
@@ -860,11 +865,13 @@ Examples:
     });
 
     document.getElementById('apiKeyInput').addEventListener('input', updateConnectButton);
+    document.getElementById('agentKeyInput').addEventListener('input', updateConnectButton);
 
     function updateConnectButton() {
       const code = Array.from(codeInputs).map(i => i.value).join('');
-      const key = document.getElementById('apiKeyInput').value;
-      document.getElementById('connectBtn').disabled = code.length !== 6 || key.length < 10;
+      const geminiKey = document.getElementById('apiKeyInput').value;
+      const agentKey = document.getElementById('agentKeyInput').value;
+      document.getElementById('connectBtn').disabled = code.length !== 6 || geminiKey.length < 10 || !agentKey;
     }
 
     document.getElementById('connectBtn').addEventListener('click', connect);
@@ -872,13 +879,18 @@ Examples:
     function connect() {
       sessionCode = Array.from(codeInputs).map(i => i.value).join('');
       apiKey = document.getElementById('apiKeyInput').value;
+      const agentKey = document.getElementById('agentKeyInput').value;
       document.getElementById('errorText').classList.remove('show');
 
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       ws = new WebSocket(`${protocol}//${window.location.host}`);
 
       ws.onopen = () => {
-        ws.send(JSON.stringify({ type: 'join-session', code: sessionCode }));
+        ws.send(JSON.stringify({
+          type: 'join-session',
+          code: sessionCode,
+          agentKey: agentKey
+        }));
       };
 
       ws.onmessage = (event) => {
@@ -890,6 +902,7 @@ Examples:
             break;
 
           case 'error':
+            document.getElementById('errorText').textContent = data.message || 'Session not found or invalid credentials.';
             document.getElementById('errorText').classList.add('show');
             break;
 

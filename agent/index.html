@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Support Agent Dashboard - Co-Browse</title>
   <style>
     * {
@@ -191,9 +191,16 @@
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
+      /* iOS Safari fixes */
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
-    .join-btn:hover:not(:disabled) {
+    .join-btn:hover:not(:disabled),
+    .join-btn:active:not(:disabled) {
       background: #2563eb;
     }
 
@@ -211,6 +218,39 @@
 
     .error-text.show {
       display: block;
+    }
+
+    .agent-key-group {
+      margin-bottom: 24px;
+    }
+
+    .agent-key-label {
+      display: block;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+
+    .agent-key-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .agent-key-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .agent-key-input::placeholder {
+      color: #475569;
     }
 
     /* Viewer Panel */
@@ -293,9 +333,16 @@
       font-weight: 500;
       cursor: pointer;
       transition: background 0.2s;
+      /* iOS Safari fixes */
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
-    .end-btn:hover {
+    .end-btn:hover,
+    .end-btn:active {
       background: rgba(239, 68, 68, 0.1);
     }
 
@@ -471,10 +518,126 @@
       font-weight: 600;
       cursor: pointer;
       margin-top: 8px;
+      /* iOS Safari fixes */
+      -webkit-appearance: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .return-btn:active {
+      background: #f3f4f6;
     }
 
     .hidden {
       display: none !important;
+    }
+
+    /* Mobile Responsive Styles */
+    @media screen and (max-width: 768px) {
+      .agent-header {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 16px;
+      }
+
+      .header-left, .header-right {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .main-layout {
+        height: auto;
+        min-height: calc(100vh - 100px);
+      }
+
+      .join-panel {
+        padding: 20px;
+      }
+
+      .join-card {
+        padding: 24px 20px;
+      }
+
+      .code-inputs {
+        gap: 6px;
+      }
+
+      .code-input {
+        width: 40px;
+        height: 48px;
+        font-size: 20px;
+      }
+
+      .viewer-toolbar {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 16px;
+      }
+
+      .viewer-info {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .viewer-container {
+        padding: 12px;
+      }
+
+      .browser-window {
+        max-width: 100%;
+      }
+
+      .browser-bar {
+        padding: 8px 12px;
+      }
+
+      .browser-address {
+        font-size: 11px;
+        padding: 6px 10px;
+      }
+
+      .browser-viewport {
+        min-height: 400px;
+      }
+
+      .char-count {
+        font-size: 12px;
+        padding: 4px 8px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .code-input {
+        width: 36px;
+        height: 44px;
+        font-size: 18px;
+      }
+
+      .join-card h2 {
+        font-size: 20px;
+      }
+
+      .join-card p {
+        font-size: 13px;
+      }
+
+      .viewer-url {
+        display: none;
+      }
+    }
+
+    /* iOS-specific fixes */
+    @supports (-webkit-touch-callout: none) {
+      input, button, select, textarea {
+        font-size: 16px;
+      }
+
+      button, .join-btn, .end-btn, .return-btn {
+        cursor: pointer;
+      }
     }
   </style>
 </head>
@@ -514,6 +677,11 @@
           <input type="text" class="code-input" maxlength="1" data-index="3" placeholder="•">
           <input type="text" class="code-input" maxlength="1" data-index="4" placeholder="•">
           <input type="text" class="code-input" maxlength="1" data-index="5" placeholder="•">
+        </div>
+
+        <div class="agent-key-group">
+          <label class="agent-key-label">Agent Authentication Key</label>
+          <input type="password" class="agent-key-input" id="agentKeyInput" placeholder="Enter your agent key">
         </div>
 
         <button class="join-btn" id="joinBtn" disabled>Connect to Session</button>
@@ -632,21 +800,36 @@
 
     function updateJoinButton() {
       const code = Array.from(codeInputs).map(i => i.value).join('');
-      document.getElementById('joinBtn').disabled = code.length !== 6;
+      const agentKey = document.getElementById('agentKeyInput').value;
+      document.getElementById('joinBtn').disabled = code.length !== 6 || !agentKey;
     }
+
+    // Also check agent key input
+    document.getElementById('agentKeyInput').addEventListener('input', updateJoinButton);
 
     // Join session
     document.getElementById('joinBtn').addEventListener('click', joinSession);
 
     function joinSession() {
       sessionCode = Array.from(codeInputs).map(i => i.value).join('');
+      const agentKey = document.getElementById('agentKeyInput').value;
       document.getElementById('errorText').classList.remove('show');
+
+      if (!agentKey) {
+        document.getElementById('errorText').textContent = 'Please enter your agent authentication key.';
+        document.getElementById('errorText').classList.add('show');
+        return;
+      }
 
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       ws = new WebSocket(`${protocol}//${window.location.host}`);
 
       ws.onopen = () => {
-        ws.send(JSON.stringify({ type: 'join-session', code: sessionCode }));
+        ws.send(JSON.stringify({
+          type: 'join-session',
+          code: sessionCode,
+          agentKey: agentKey
+        }));
       };
 
       ws.onmessage = (event) => {
@@ -658,6 +841,7 @@
             break;
 
           case 'error':
+            document.getElementById('errorText').textContent = data.message || 'An error occurred. Please try again.';
             document.getElementById('errorText').classList.add('show');
             break;
 
@@ -774,11 +958,57 @@
         input.value = '';
         input.placeholder = '•';
       });
+      // Don't clear agent key on reset (convenience for agents)
       updateJoinButton();
     }
 
     // Focus first input on load
     codeInputs[0].focus();
+
+    // ========================================
+    // iOS SAFARI & CROSS-BROWSER SUPPORT
+    // ========================================
+    document.addEventListener('DOMContentLoaded', function() {
+      // Detect iOS
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      if (isIOS) {
+        // Add touch support for all action buttons on iOS
+        document.querySelectorAll('.join-btn, .end-btn, .return-btn').forEach(btn => {
+          btn.style.cursor = 'pointer';
+        });
+
+        // Prevent double-tap zoom on buttons
+        document.querySelectorAll('button').forEach(btn => {
+          btn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            if (e.target.onclick) {
+              e.target.onclick(e);
+            } else {
+              e.target.click();
+            }
+          }, { passive: false });
+        });
+      }
+
+      // Fix for 300ms tap delay on older browsers
+      if ('ontouchstart' in window) {
+        document.body.style.touchAction = 'manipulation';
+      }
+    });
+
+    // Polyfill for older browsers
+    if (!Element.prototype.closest) {
+      Element.prototype.closest = function(s) {
+        var el = this;
+        do {
+          if (el.matches(s)) return el;
+          el = el.parentElement || el.parentNode;
+        } while (el !== null && el.nodeType === 1);
+        return null;
+      };
+    }
   </script>
 </body>
 </html>
