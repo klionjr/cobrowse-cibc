@@ -690,6 +690,184 @@
       margin-bottom: 20px;
     }
 
+    /* Carousel Styles */
+    .carousel-container {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .carousel-slides {
+      display: flex;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .carousel-slide {
+      min-width: 100%;
+      padding: 0 10px;
+      box-sizing: border-box;
+    }
+
+    .carousel-slide .slide-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .carousel-slide .slide-icon.warning {
+      background: #fef3c7;
+    }
+
+    .carousel-slide .slide-icon.info {
+      background: #dbeafe;
+    }
+
+    .carousel-slide .slide-icon.security {
+      background: #dcfce7;
+    }
+
+    .carousel-slide .slide-icon svg {
+      width: 36px;
+      height: 36px;
+    }
+
+    .carousel-slide h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .carousel-slide p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .carousel-slide .warning-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+    }
+
+    .carousel-slide .warning-box p {
+      color: #991b1b;
+      margin: 0;
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    .carousel-slide .tip-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+    }
+
+    .carousel-slide .tip-box p {
+      color: #1e40af;
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 20px 0;
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ddd;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .carousel-dot.active {
+      background: #c41f3e;
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    .carousel-nav {
+      display: flex;
+      gap: 12px;
+    }
+
+    .carousel-nav button {
+      flex: 1;
+    }
+
+    .carousel-btn-back {
+      background: #fff;
+      color: #666;
+      border: 1px solid #ddd;
+      padding: 12px 24px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .carousel-btn-back:hover {
+      background: #f5f5f5;
+    }
+
+    .carousel-btn-next {
+      background: #c41f3e;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .carousel-btn-next:hover {
+      background: #a01830;
+    }
+
+    .checkbox-confirm {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      margin-bottom: 20px;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+
+    .checkbox-confirm input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      accent-color: #c41f3e;
+    }
+
+    .checkbox-confirm label {
+      font-size: 13px;
+      color: #333;
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
     /* Active state for header button */
     .live-support-btn.active {
       background: #22c55e;
@@ -767,6 +945,24 @@
         overflow-y: auto;
       }
 
+      .carousel-slide h2 {
+        font-size: 18px;
+      }
+
+      .carousel-slide .slide-icon {
+        width: 60px;
+        height: 60px;
+      }
+
+      .carousel-slide .slide-icon svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      .checkbox-confirm label {
+        font-size: 12px;
+      }
+
       .big-code {
         font-size: 32px;
         letter-spacing: 4px;
@@ -833,9 +1029,9 @@
         </div>
         <button class="live-support-btn" id="supportBtn" onclick="handleSupportClick()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
           </svg>
-          <span id="supportBtnText">Share My Screen</span>
+          <span id="supportBtnText">On a call with us? Get help here</span>
         </button>
       </div>
 
@@ -1067,16 +1263,86 @@
   <div class="share-modal" id="shareModal">
     <button class="modal-close" onclick="closeModal()">&times;</button>
 
-    <!-- Before session starts -->
-    <div id="modal-start">
-      <div class="modal-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c41f3e" stroke-width="2">
-          <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
-        </svg>
+    <!-- Educational Carousel -->
+    <div id="modal-carousel">
+      <div class="carousel-container">
+        <div class="carousel-slides" id="carouselSlides">
+          <!-- Slide 1: Did you call us? -->
+          <div class="carousel-slide">
+            <div class="slide-icon warning">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </div>
+            <h2>Did you call CIBC?</h2>
+            <p>Screen sharing should only be used when <strong>you</strong> called us for help.</p>
+            <div class="warning-box">
+              <p>CIBC will never call you and ask you to share your screen. If someone called you asking to share your screen, hang up immediately.</p>
+            </div>
+          </div>
+
+          <!-- Slide 2: Verify the website -->
+          <div class="carousel-slide">
+            <div class="slide-icon info">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <path d="M3 9h18"/>
+                <path d="M9 21V9"/>
+              </svg>
+            </div>
+            <h2>Verify you're on cibc.com</h2>
+            <p>Before sharing your screen, always check that you're on the official CIBC website.</p>
+            <div class="tip-box">
+              <p>Look at your browser's address bar. It should show <strong>cibc.com</strong> with a padlock icon indicating a secure connection.</p>
+            </div>
+          </div>
+
+          <!-- Slide 3: What we can see -->
+          <div class="carousel-slide">
+            <div class="slide-icon security">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <h2>Your security is protected</h2>
+            <p>During screen sharing, CIBC agents:</p>
+            <div class="tip-box">
+              <p><strong>Cannot see:</strong> Your passwords, verification codes, or PINs - these are automatically hidden.</p>
+            </div>
+            <div class="warning-box">
+              <p><strong>Will never ask you</strong> to read out verification codes, passwords, or PINs. If asked, end the call immediately.</p>
+            </div>
+          </div>
+
+          <!-- Slide 4: Confirmation -->
+          <div class="carousel-slide">
+            <div class="slide-icon security">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <h2>Ready to share your screen?</h2>
+            <p>Please confirm you understand the following:</p>
+            <div class="checkbox-confirm">
+              <input type="checkbox" id="confirmCheck" onchange="updateStartButton()">
+              <label for="confirmCheck">I called CIBC myself and I'm on the official cibc.com website. I understand CIBC will never ask me for my password or verification codes.</label>
+            </div>
+          </div>
+        </div>
       </div>
-      <h2>Share your screen with your agent</h2>
-      <p>Your agent will be able to see this page to help guide you. Passwords and verification codes are always hidden.</p>
-      <button class="modal-btn-primary" onclick="startSession()">Start Screen Share</button>
+
+      <div class="carousel-dots" id="carouselDots">
+        <button class="carousel-dot active" onclick="goToSlide(0)"></button>
+        <button class="carousel-dot" onclick="goToSlide(1)"></button>
+        <button class="carousel-dot" onclick="goToSlide(2)"></button>
+        <button class="carousel-dot" onclick="goToSlide(3)"></button>
+      </div>
+
+      <div class="carousel-nav">
+        <button class="carousel-btn-back" id="carouselBack" onclick="prevSlide()" style="visibility: hidden;">Back</button>
+        <button class="carousel-btn-next" id="carouselNext" onclick="nextSlide()">Next</button>
+      </div>
     </div>
 
     <!-- Session active -->
@@ -1087,7 +1353,7 @@
         <span class="status-dot waiting"></span>
         <span id="statusText">Waiting for agent to connect...</span>
       </div>
-      <p class="privacy-note">🔒 Your passwords and verification codes are hidden from the agent</p>
+      <p class="privacy-note">Your passwords and verification codes are hidden from the agent</p>
       <button class="modal-btn-outline" onclick="endSession()">Stop Sharing</button>
     </div>
   </div>
@@ -1144,6 +1410,13 @@
     function closeModal() {
       document.getElementById('modalOverlay').classList.remove('show');
       document.getElementById('shareModal').classList.remove('show');
+      // Reset carousel when closing (unless session is active)
+      if (!sessionActive) {
+        currentSlide = 0;
+        updateCarousel();
+        document.getElementById('confirmCheck').checked = false;
+        updateStartButton();
+      }
     }
 
     function startSession() {
@@ -1155,7 +1428,7 @@
         if (data.type === 'session-created') {
           sessionActive = true;
           document.getElementById('sessionCode').textContent = data.code;
-          document.getElementById('modal-start').classList.add('hidden');
+          document.getElementById('modal-carousel').classList.add('hidden');
           document.getElementById('modal-active').classList.remove('hidden');
           document.getElementById('supportBtn').classList.add('active');
           document.getElementById('supportBtnText').textContent = 'Sharing: ' + data.code;
@@ -1223,12 +1496,82 @@
       sessionActive = false;
       if (observer) observer.disconnect();
       if (ws) ws.close();
-      document.getElementById('modal-start').classList.remove('hidden');
+      document.getElementById('modal-carousel').classList.remove('hidden');
       document.getElementById('modal-active').classList.add('hidden');
       document.getElementById('supportBtn').classList.remove('active');
-      document.getElementById('supportBtnText').textContent = 'Share My Screen';
+      document.getElementById('supportBtnText').textContent = 'On a call with us? Get help here';
       document.querySelector('.status-dot').className = 'status-dot waiting';
       document.getElementById('statusText').textContent = 'Waiting for agent to connect...';
+      // Reset carousel
+      currentSlide = 0;
+      updateCarousel();
+      document.getElementById('confirmCheck').checked = false;
+      updateStartButton();
+    }
+
+    // ========================================
+    // CAROUSEL LOGIC
+    // ========================================
+    let currentSlide = 0;
+    const totalSlides = 4;
+
+    function updateCarousel() {
+      const slides = document.getElementById('carouselSlides');
+      slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+      // Update dots
+      document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentSlide);
+      });
+
+      // Update buttons
+      const backBtn = document.getElementById('carouselBack');
+      const nextBtn = document.getElementById('carouselNext');
+
+      backBtn.style.visibility = currentSlide === 0 ? 'hidden' : 'visible';
+
+      if (currentSlide === totalSlides - 1) {
+        nextBtn.textContent = 'Start Screen Share';
+        nextBtn.disabled = !document.getElementById('confirmCheck').checked;
+        nextBtn.style.opacity = nextBtn.disabled ? '0.5' : '1';
+      } else {
+        nextBtn.textContent = 'Next';
+        nextBtn.disabled = false;
+        nextBtn.style.opacity = '1';
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide === totalSlides - 1) {
+        // Final slide - start session
+        if (document.getElementById('confirmCheck').checked) {
+          document.getElementById('modal-carousel').classList.add('hidden');
+          startSession();
+        }
+      } else {
+        currentSlide++;
+        updateCarousel();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateCarousel();
+      }
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      updateCarousel();
+    }
+
+    function updateStartButton() {
+      if (currentSlide === totalSlides - 1) {
+        const nextBtn = document.getElementById('carouselNext');
+        nextBtn.disabled = !document.getElementById('confirmCheck').checked;
+        nextBtn.style.opacity = nextBtn.disabled ? '0.5' : '1';
+      }
     }
 
     function throttle(fn, limit) {
