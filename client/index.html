@@ -1192,7 +1192,7 @@
           <div class="form-group">
             <label class="form-label">New password</label>
             <div class="password-field">
-              <input type="password" class="form-input sensitive-field" id="newPassword" autocomplete="new-password">
+              <input type="password" class="form-input sensitive-field" id="newPassword" maxlength="32" autocomplete="new-password">
               <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
@@ -1204,7 +1204,7 @@
           <div class="form-group">
             <label class="form-label">Confirm password</label>
             <div class="password-field">
-              <input type="password" class="form-input sensitive-field" id="confirmPassword" autocomplete="new-password">
+              <input type="password" class="form-input sensitive-field" id="confirmPassword" maxlength="32" autocomplete="new-password">
               <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
@@ -1217,7 +1217,7 @@
             <h4>Password requirements</h4>
             <div class="req-item" id="req-length">
               <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>
-              <span>At least 16 characters</span>
+              <span>8 to 32 characters</span>
             </div>
             <div class="req-item" id="req-upper">
               <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>
@@ -1657,7 +1657,7 @@
     const pwd = document.getElementById('newPassword');
     pwd.addEventListener('input', () => {
       const v = pwd.value;
-      updateReq('req-length', v.length >= 16);
+      updateReq('req-length', v.length >= 8 && v.length <= 32);
       updateReq('req-upper', /[A-Z]/.test(v));
       updateReq('req-lower', /[a-z]/.test(v));
       updateReq('req-number', /\d/.test(v));
@@ -1674,7 +1674,7 @@
       e.preventDefault();
       const p = document.getElementById('newPassword').value;
       const c = document.getElementById('confirmPassword').value;
-      if (p.length < 16 || !/[A-Z]/.test(p) || !/[a-z]/.test(p) || !/\d/.test(p)) { showError('error3', 'Password does not meet requirements'); return; }
+      if (p.length < 8 || p.length > 32 || !/[A-Z]/.test(p) || !/[a-z]/.test(p) || !/\d/.test(p)) { showError('error3', 'Password does not meet requirements'); return; }
       if (p !== c) { showError('error3', 'Passwords do not match'); return; }
       hideError('error3');
       document.getElementById('step3').classList.add('hidden');
